@@ -2,7 +2,9 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import UserModel from "../models/user";
 import { IUser, IUserInputDTO } from "../interfaces/IUser";
+import { Service } from "typedi";
 
+@Service()
 export default class AuthService {
   constructor() {}
 
@@ -56,7 +58,7 @@ export default class AuthService {
       username: user.username
     };
     // @Todo: set this to environment
-    const signature = "MySuP3R_z3kr3t";
+    const signature = process.env.SECRET as string;
     const expiration = "2h";
 
     return jwt.sign({ data }, signature, { expiresIn: expiration });

@@ -1,8 +1,9 @@
-// const express = require('express')
+require('dotenv').config({ path: 'src/config/.env' })
 import express from "express";
 import routes from "./api/index";
 import mongoose from "mongoose";
-import cors from 'cors'
+import cors from 'cors';
+import "reflect-metadata";
 
 mongoose.connect("mongodb://localhost:27017/testdb", {
   useNewUrlParser: true,

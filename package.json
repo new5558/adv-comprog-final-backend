@@ -9,13 +9,16 @@
     "debug": "nodemon --watch src/**/* -e ts,json --exec node --inspect -r ts-node/register ./src/app.ts"
   },
   "dependencies": {
+    "@types/node": "^12.12.14",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.7.12",
-    "nodemon": "^2.0.1"
+    "nodemon": "^2.0.1",
+    "reflect-metadata": "^0.1.13",
+    "typedi": "^0.8.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
