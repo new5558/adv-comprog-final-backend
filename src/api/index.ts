@@ -10,14 +10,26 @@ router.get("/", (req: Request, res: Response) => {
 router.post("/login", async (req: Request, res: Response) => {
   const { body } = req;
   const { username, password } = body;
-  const result = await Container.get(AuthService).login(username, password);
-  res.status(200).json(result);
+  try {
+    const result = await Container.get(AuthService).login(username, password);
+    if(result.user) {
+      res.status(200).json(result);
+    } else {
+      res.status(500).send();
+    }
+  } catch(e) {
+    res.status(401).send(e + '');
+  }
 });
 
 router.post("/signup", async (req: Request, res: Response) => {
   const { body } = req;
-  await Container.get(AuthService).signup(body);
-  res.status(200).send("done");
+  try {
+    const result = await Container.get(AuthService).signup(body);
+    res.status(200).send(result);
+  } catch(e) {
+    res.status(401).send(e);
+  }
 });
 
 export default router;

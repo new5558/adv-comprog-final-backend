@@ -18,7 +18,6 @@ export default class AuthService {
       salt,
       name
     });
-    // @Todo abstract mmongoDB opreation from auth service
     userRecord.save();
     return {
       user: {
@@ -57,7 +56,6 @@ export default class AuthService {
       name: user.name,
       username: user.username
     };
-    // @Todo: set this to environment
     const signature = process.env.SECRET as string;
     const expiration = "2h";
 
