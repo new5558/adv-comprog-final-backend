@@ -1,4 +1,4 @@
-require("dotenv").config({ path: "src/config/.env" });
+require("dotenv").config({ path: "./config/.env" });
 import express from "express";
 import routes from "./api/index";
 import "reflect-metadata";
