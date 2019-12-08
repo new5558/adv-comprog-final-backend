@@ -3,7 +3,6 @@ import express from "express";
 import routes from "./api/index";
 import "reflect-metadata";
 
-
 async function startServer() {
   const app = express();
   await require('./loaders').default({ expressApp: app });

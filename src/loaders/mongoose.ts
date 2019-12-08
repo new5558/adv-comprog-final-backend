@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 export default async () => {
   const connection = await mongoose.connect(
-    "mongodb://localhost:27017/testdb",
+    process.env.databaseURL as string,
     {
       useNewUrlParser: true,
       useUnifiedTopology: true
