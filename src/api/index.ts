@@ -1,6 +1,6 @@
 import { Router, Request, Response, Express } from "express";
-import auth from "./route.auth";
-import user from "./route.users";
+import auth from "./routes/route.auth";
+import user from "./routes/route.users";
 import listEndpoints from "express-list-endpoints";
 
 const router = Router();

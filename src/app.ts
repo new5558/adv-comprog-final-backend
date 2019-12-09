@@ -1,6 +1,6 @@
 require("dotenv").config({ path: "src/config/.env" });
 import express from "express";
-import routes from "./api/routes/index";
+import routes from "./api/index";
 import "reflect-metadata";
 import loader from './loaders/index';
 

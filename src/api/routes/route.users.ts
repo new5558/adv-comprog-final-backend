@@ -8,7 +8,7 @@ export default (app: express.Router) => {
   app.use("/user", router);
 
   router.get(
-    "/user",
+    "/",
     isAuthenticated,
     attachCurrentUser,
     (req: express.Request, res: express.Response) => {

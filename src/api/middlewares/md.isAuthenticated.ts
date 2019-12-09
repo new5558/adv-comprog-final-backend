@@ -12,12 +12,16 @@ const getTokenFromHeader = (req: Request) => {
 
 export default (req: Request, res: Response, next: NextFunction) => {
   const token = getTokenFromHeader(req);
-  const decodedUser = token && jwt.verify(token, process.env.SECRET as string);
-  console.log(decodedUser, 'decodeUser');
-  if (!decodedUser) {
-    res.status(401).send("Unauthorized");
+  let decodedUser: any = {};
+  if (token) {
+    try {
+      decodedUser = jwt.verify(token, process.env.SECRET as string);
+      req.decodedUser = decodedUser;
+      next();
+    } catch {
+      res.status(401).send("Unauthorized");
+    }
   } else {
-    req.decodedUser = decodedUser;
-    next();
+    res.status(401).send("Unauthorized");
   }
 };
