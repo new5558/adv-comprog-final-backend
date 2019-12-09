@@ -2,7 +2,10 @@ import { Router, Request, Response } from "express";
 import AuthService from "../../services/service.auth";
 import { Container } from "typedi";
 import { body } from "express-validator";
-import isValidated from "../middlewares/md.isValidated";
+import isValidated from "../middlewares/md.isValidator";
+import isAuthenticated from "../middlewares/md.isAuthenticated";
+import attachCurrentUser from "../middlewares/md.attachCurrentUser";
+import requiredRole from "../middlewares/md.requiredRole";
 
 const router = Router();
 
@@ -56,7 +59,14 @@ export default (app: Router) => {
       .isString()
       .trim()
       .escape(),
+    body("role")
+      .isString()
+      .trim()
+      .escape(),
     isValidated,
+    isAuthenticated,
+    attachCurrentUser,
+    requiredRole("admin"),
     async (req: Request, res: Response) => {
       const { body } = req;
       try {

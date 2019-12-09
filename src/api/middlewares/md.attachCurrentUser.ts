@@ -1,13 +1,11 @@
 import UserModel from "../../models/user";
-import * as express from "express";
+import { Request, Response, NextFunction } from "express";
 
-export default async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
-) => {
+export default async (req: Request, res: Response, next: NextFunction) => {
   const { decodedUser } = req;
-  const userRecord = decodedUser && (await UserModel.findById(decodedUser.data._id).select("-password"));
+  const userRecord =
+    decodedUser &&
+    (await UserModel.findById(decodedUser.data._id).select("-password"));
   req.currentUser = userRecord;
   if (!userRecord) {
     return res.status(401).end("User not found");

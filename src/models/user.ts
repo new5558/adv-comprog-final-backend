@@ -5,6 +5,7 @@ const UserSchema = new mongoose.Schema({
     username: String,
     password: String,
     name: String,
+    role: String,
 })
 
 export default mongoose.model<IUser & mongoose.Document>('user', UserSchema, 'users');

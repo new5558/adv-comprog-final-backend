@@ -3,11 +3,13 @@ export interface IUser {
   name: string;
   username: string;
   password: string;
+  role: string;
   salt: string;
 }
 
 export interface IUserInputDTO {
   name: string;
+  role: string;
   username: string;
   password: string;
 }

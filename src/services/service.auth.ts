@@ -9,12 +9,13 @@ export default class AuthService {
   constructor() {}
 
   public async signup(userInfo: IUserInputDTO): Promise<any> {
-    const { username , password, name} = userInfo;
+    const { username, password, name, role } = userInfo;
     const salt = bcrypt.genSaltSync(10);
     const passwordHashed = bcrypt.hashSync(password, salt);
     const userRecord = await UserModel.create({
       password: passwordHashed,
       username,
+      role,
       salt,
       name
     });
@@ -23,6 +24,7 @@ export default class AuthService {
       user: {
         email: userRecord.username,
         name: userRecord.name,
+        role: userRecord.role,
         _id: userRecord._id
       }
     };
@@ -33,19 +35,16 @@ export default class AuthService {
     if (!userRecord) {
       throw new Error("User not found");
     } else {
-      const correctPassword = bcrypt.compareSync(
-        password,
-        userRecord.password
-      );
+      const correctPassword = bcrypt.compareSync(password, userRecord.password);
       if (!correctPassword) {
         throw new Error("Incorrect password");
       }
     }
-
     return {
       user: {
-        usernmae: userRecord.username,
-        name: userRecord.name
+        username: userRecord.username,
+        name: userRecord.name,
+        role: userRecord.role
       },
       token: this.generateJWT(userRecord)
     };
