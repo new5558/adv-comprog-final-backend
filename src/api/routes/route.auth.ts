@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 import AuthService from "../../services/service.auth";
 import { Container } from "typedi";
 import { body } from "express-validator";
-import isValidated from "../middlewares/md.isValidator";
+import isValidated from "../middlewares/md.isValidated";
 import isAuthenticated from "../middlewares/md.isAuthenticated";
 import attachCurrentUser from "../middlewares/md.attachCurrentUser";
 import requiredRole from "../middlewares/md.requiredRole";
