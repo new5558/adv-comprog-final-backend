@@ -6,6 +6,7 @@
   "scripts": {
     "start": "ts-node ./src/app.ts",
     "start:watch": "nodemon",
+    "start:prod": "node ./dist/app.js",
     "debug": "nodemon --watch src/**/* -e ts,json --exec node --inspect -r ts-node/register ./src/app.ts",
     "build": "tsc"
   },
