@@ -6,7 +6,7 @@ import isAuthenticated from "../middlewares/md.isAuthenticated";
 import attachCurrentUser from "../middlewares/md.attachCurrentUser";
 import requiredRole from "../middlewares/md.requiredRole";
 import createError from "http-errors";
-import {loginValidator, signupValidator} from '../middlewares/md.validators';
+import { loginValidator, signupValidator } from "../middlewares/md.validators";
 
 const router = Router();
 

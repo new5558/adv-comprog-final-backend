@@ -11,28 +11,27 @@ export default class AuthService {
 
   public async signup(userInfo: IUserInputDTO): Promise<any> {
     const { username, password } = userInfo;
-    const userRecord = await UserModel.findOne({ username });
-    if (userRecord) {
+    const existingUserRecord = await UserModel.findOne({ username });
+    if (existingUserRecord) {
       return createError(409, "User already exists");
     }
-    {
-      const salt = bcrypt.genSaltSync(10);
-      const passwordHashed = bcrypt.hashSync(password, salt);
-      const userRecord = await UserModel.create({
-        password: passwordHashed,
-        ...userInfo,
-        salt,
-      });
-      await userRecord.save();
-      return {
-        user: {
-          email: userRecord.username,
-          name: userRecord.name,
-          role: userRecord.role,
-          _id: userRecord._id
-        }
-      };
-    }
+    const salt = bcrypt.genSaltSync(10);
+    const passwordHashed = bcrypt.hashSync(password, salt);
+    delete userInfo.password;
+    const userRecord = await UserModel.create({
+      password: passwordHashed,
+      ...userInfo,
+      salt
+    });
+    await userRecord.save();
+    return {
+      message: "Create user success",
+      user: {
+        username: userRecord.username,
+        name: userRecord.name,
+        role: userRecord.role
+      }
+    };
   }
 
   public async login(username: string, password: string): Promise<any> {
