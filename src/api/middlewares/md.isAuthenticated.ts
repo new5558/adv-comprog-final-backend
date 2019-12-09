@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import createError from "http-errors";
 
 const getTokenFromHeader = (req: Request) => {
   if (
@@ -10,17 +11,16 @@ const getTokenFromHeader = (req: Request) => {
   }
 };
 
-export default (req: Request, res: Response, next: NextFunction) => {
+export default (req: Request, _: Response, next: NextFunction) => {
   const token = getTokenFromHeader(req);
   if (token) {
     try {
       const decodedUser = jwt.verify(token, process.env.SECRET as string);
       req.decodedUser = decodedUser;
-      next();
+      return next();
     } catch {
-      res.status(401).send("Unauthorized");
+      return createError(401, "Unauthorized");
     }
-  } else {
-    res.status(401).send("Unauthorized");
   }
+  return createError(401, "Unauthorized");
 };

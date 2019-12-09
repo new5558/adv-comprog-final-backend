@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator/check";
+import createError from "http-errors";
 
 export default (req: Request, res: Response, next: NextFunction) => {
   const validationErrors = validationResult(req);
   if (!validationErrors.isEmpty()) {
-    res.status(422).json(validationErrors);
-  } else {
-    next();
+    return createError(422, validationErrors)
   }
+  return next();
 };

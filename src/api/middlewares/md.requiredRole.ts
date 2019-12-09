@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from "express";
+import createError from "http-errors";
 
 export default (role: string) => (
   req: Request,
-  res: Response,
+  _: Response,
   next: NextFunction
 ) => {
   const { currentUser } = req;
   if (currentUser && currentUser.role == role) {
-    next();
-  } else {
-    res.status(401).send("Action not allowed");
+    return next();
   }
+  return createError(401, "Action not allowed");
 };

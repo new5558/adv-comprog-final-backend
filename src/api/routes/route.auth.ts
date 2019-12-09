@@ -34,12 +34,11 @@ export default (app: Router) => {
           password
         );
         if (result instanceof createError.HttpError) {
-          next(result);
-        } else {
-          res.status(200).json(result);
+          return next(result);
         }
+        return res.status(200).json(result);
       } catch (e) {
-        next(createError(500, "Internal Server Error"));
+        return next(createError(500, "Internal Server Error"));
       }
     }
   );
@@ -73,12 +72,11 @@ export default (app: Router) => {
       try {
         const result = await Container.get(AuthService).signup(body);
         if (result instanceof createError.HttpError) {
-          next(result);
-        } else {
-          res.status(200).send(result);
+          return next(result);
         }
+        return res.status(200).send(result);
       } catch (e) {
-        next(createError(500, "Internal Server Error"));
+        return next(createError(500, "Internal Server Error"));
       }
     }
   );

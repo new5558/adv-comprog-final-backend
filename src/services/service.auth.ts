@@ -14,7 +14,8 @@ export default class AuthService {
     const userRecord = await UserModel.findOne({ username });
     if (userRecord) {
       return createError(409, "User already exists");
-    } {
+    }
+    {
       const salt = bcrypt.genSaltSync(10);
       const passwordHashed = bcrypt.hashSync(password, salt);
       const userRecord = await UserModel.create({
@@ -40,11 +41,10 @@ export default class AuthService {
     const userRecord = await UserModel.findOne({ username });
     if (!userRecord) {
       return createError(404, "User not found");
-    } else {
-      const isPasswordValid = bcrypt.compareSync(password, userRecord.password);
-      if (!isPasswordValid) {
-        return createError(401, "Incorrect password");
-      }
+    }
+    const isPasswordValid = bcrypt.compareSync(password, userRecord.password);
+    if (!isPasswordValid) {
+      return createError(401, "Incorrect password");
     }
     return {
       user: {

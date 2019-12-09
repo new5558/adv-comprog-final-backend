@@ -20,14 +20,19 @@ export default ({ app }: any) => {
     (
       error: createError.HttpError,
       _: Request,
-      res: Response,
+      __: Response,
       next: NextFunction
     ) => {
-      if (error instanceof SyntaxError) {
-        next(createError(400, "Bad Request"));
-      } else {
-        next();
+      if (process.env.NODE_ENV !== "production") {
+        console.log(error);
       }
+      if (error instanceof SyntaxError) {
+        if (error.status === 400 && "body" in error) {
+          return next(createError(400, "Bad Request"));
+        }
+        return next(createError(500, "Internal Server Error"));
+      }
+      return next();
     }
   );
   return app;

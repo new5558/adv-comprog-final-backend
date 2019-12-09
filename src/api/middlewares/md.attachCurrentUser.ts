@@ -10,7 +10,6 @@ export default async (req: Request, res: Response, next: NextFunction) => {
   req.currentUser = userRecord;
   if (!userRecord) {
     return next(createError(401, "User not found"));
-  } else {
-    return next();
   }
+  return next();
 };
