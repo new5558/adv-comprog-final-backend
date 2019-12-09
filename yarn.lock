@@ -44,6 +44,13 @@
     "@types/express" "*"
     "@types/express-unless" "*"
 
+"@types/express-list-endpoints@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@types/express-list-endpoints/-/express-list-endpoints-4.0.0.tgz#9f02847c338bde10b7aeafa64a8906d0fa479d06"
+  integrity sha512-2f/OUTiiqobKWKwJAiEfb/WyGi4t0KuJH2JOTEdWYH1R2IkrtNMM/nxzXrQl4/jNapiVzL7FbtE3KCNgGGXH4g==
+  dependencies:
+    "@types/express" "*"
+
 "@types/express-serve-static-core@*":
   version "4.17.0"
   resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.17.0.tgz#e80c25903df5800e926402b7e8267a675c54a281"
@@ -494,6 +501,11 @@ express-jwt@^5.3.1:
     express-unless "^0.3.0"
     jsonwebtoken "^8.1.0"
     lodash.set "^4.0.0"
+
+express-list-endpoints@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/express-list-endpoints/-/express-list-endpoints-4.0.1.tgz#f83ec9de4df21b904cfba523bc913aee4c17e9db"
+  integrity sha512-KjY7frYk72/Jwk2VgqyvuXlTPslEkWkzjUXPUMCUguVmAWqd6fh60VHr+sEfqJgMAOE3hKhUjm/7tLASVaE2Qg==
 
 express-unless@^0.3.0:
   version "0.3.1"
