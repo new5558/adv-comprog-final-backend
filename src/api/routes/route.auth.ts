@@ -1,12 +1,12 @@
 import { Router, Request, Response, NextFunction } from "express";
 import AuthService from "../../services/service.auth";
 import { Container } from "typedi";
-import { body } from "express-validator";
 import isValidated from "../middlewares/md.isValidated";
 import isAuthenticated from "../middlewares/md.isAuthenticated";
 import attachCurrentUser from "../middlewares/md.attachCurrentUser";
 import requiredRole from "../middlewares/md.requiredRole";
 import createError from "http-errors";
+import {loginValidator, signupValidator} from '../middlewares/md.validators';
 
 const router = Router();
 
@@ -15,15 +15,7 @@ export default (app: Router) => {
 
   router.post(
     "/login",
-    body("username")
-      .isString()
-      .isLength({ min: 10, max: 10 })
-      .trim()
-      .escape(),
-    body("password")
-      .isString()
-      .trim()
-      .escape(),
+    loginValidator(),
     isValidated,
     async (req: Request, res: Response, next: NextFunction) => {
       const { body } = req;
@@ -45,24 +37,7 @@ export default (app: Router) => {
 
   router.post(
     "/signup",
-    body("username")
-      .isString()
-      .isLength({ min: 10, max: 10 })
-      .trim()
-      .escape(),
-    body("password")
-      .isString()
-      .isLength({ min: 8 })
-      .trim()
-      .escape(),
-    body("name")
-      .isString()
-      .trim()
-      .escape(),
-    body("role")
-      .isString()
-      .trim()
-      .escape(),
+    signupValidator,
     isValidated,
     isAuthenticated,
     attachCurrentUser,
