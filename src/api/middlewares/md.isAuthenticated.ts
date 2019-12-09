@@ -12,10 +12,9 @@ const getTokenFromHeader = (req: Request) => {
 
 export default (req: Request, res: Response, next: NextFunction) => {
   const token = getTokenFromHeader(req);
-  let decodedUser: any = {};
   if (token) {
     try {
-      decodedUser = jwt.verify(token, process.env.SECRET as string);
+      const decodedUser = jwt.verify(token, process.env.SECRET as string);
       req.decodedUser = decodedUser;
       next();
     } catch {
