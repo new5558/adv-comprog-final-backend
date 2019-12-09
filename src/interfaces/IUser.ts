@@ -1,10 +1,18 @@
+import { Schema } from "mongoose";
+import {Degree, StudentType, Role} from './ICommon';
+
 export interface IUser {
-  _id: string;
+  _id: Schema.Types.ObjectId;
   name: string;
   username: string;
   password: string;
-  role: string;
+  role: Role;
   salt: string;
+  faculty: number;
+  major: string;
+  studentType: StudentType;
+  degree: Degree;
+  registeredCourse: Schema.Types.ObjectId[];
 }
 
 export interface IUserInputDTO {
@@ -12,4 +20,9 @@ export interface IUserInputDTO {
   role: string;
   username: string;
   password: string;
+  faculty: number;
+  major: string;
+  system: number;
+  degree: Degree;
+  registeredCourse: Schema.Types.ObjectId[];
 }

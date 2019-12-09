@@ -8,5 +8,6 @@ var UserSchema = new mongoose_1.default.Schema({
     username: String,
     password: String,
     name: String,
+    role: String,
 });
 exports.default = mongoose_1.default.model('user', UserSchema, 'users');

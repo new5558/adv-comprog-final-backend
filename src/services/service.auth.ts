@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import UserModel from "../models/user";
+import UserModel from "../models/model.user";
 import { IUser, IUserInputDTO } from "../interfaces/IUser";
 import { Service } from "typedi";
 import createError from "http-errors";

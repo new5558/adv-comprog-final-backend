@@ -39,21 +39,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-var loader_express_1 = __importDefault(require("./loader.express"));
-var loader_mongoose_1 = __importDefault(require("./loader.mongoose"));
-exports.default = (function (_a) {
-    var expressApp = _a.expressApp;
-    return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0: return [4 /*yield*/, loader_mongoose_1.default()];
-                case 1:
-                    _b.sent();
-                    return [4 /*yield*/, loader_express_1.default({ app: expressApp })];
-                case 2:
-                    _b.sent();
-                    return [2 /*return*/];
-            }
-        });
+var user_1 = __importDefault(require("../../models/user"));
+var http_errors_1 = __importDefault(require("http-errors"));
+exports.default = (function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+    var decodedUser, userRecord, _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                decodedUser = req.decodedUser;
+                _a = decodedUser;
+                if (!_a) return [3 /*break*/, 2];
+                return [4 /*yield*/, user_1.default.findById(decodedUser.data._id).select("-password")];
+            case 1:
+                _a = (_b.sent());
+                _b.label = 2;
+            case 2:
+                userRecord = _a;
+                req.currentUser = userRecord;
+                if (!userRecord) {
+                    return [2 /*return*/, next(http_errors_1.default(401, "User not found"))];
+                }
+                return [2 /*return*/, next()];
+        }
     });
-});
+}); });
