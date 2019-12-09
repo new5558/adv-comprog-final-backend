@@ -22,7 +22,8 @@ export default class AuthService {
     return {
       user: {
         email: userRecord.username,
-        name: userRecord.name
+        name: userRecord.name,
+        _id: userRecord._id
       }
     };
   }
