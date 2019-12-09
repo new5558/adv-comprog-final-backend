@@ -19,8 +19,8 @@ export default (req: Request, _: Response, next: NextFunction) => {
       req.decodedUser = decodedUser;
       return next();
     } catch {
-      return createError(401, "Unauthorized");
+      return next(createError(401, "Unauthorized"));
     }
   }
-  return createError(401, "Unauthorized");
+  return next(createError(401, "Unauthorized"));
 };

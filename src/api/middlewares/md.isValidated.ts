@@ -2,10 +2,14 @@ import { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator/check";
 import createError from "http-errors";
 
-export default (req: Request, res: Response, next: NextFunction) => {
-  const validationErrors = validationResult(req);
+export default (req: Request, _: Response, next: NextFunction) => {
+  const validationErrors = validationResult(req).formatWith(
+    ({ location, msg, param, nestedErrors }) => {
+      return { location, msg, param, nestedErrors };
+    }
+  );
   if (!validationErrors.isEmpty()) {
-    return createError(422, validationErrors)
+    return next(createError(422, { errors: validationErrors.array() }));
   }
   return next();
 };

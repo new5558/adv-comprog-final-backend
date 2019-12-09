@@ -10,5 +10,5 @@ export default (role: string) => (
   if (currentUser && currentUser.role == role) {
     return next();
   }
-  return createError(401, "Action not allowed");
+  return next(createError(401, "Action not allowed"));
 };
