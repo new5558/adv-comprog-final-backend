@@ -37,7 +37,7 @@ export default (app: Router) => {
 
   router.post(
     "/signup",
-    signupValidator,
+    signupValidator(),
     isValidated,
     isAuthenticated,
     attachCurrentUser,
