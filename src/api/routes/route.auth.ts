@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import AuthService from "../../services/service.auth";
 import { Container } from "typedi";
 import { body } from "express-validator";
@@ -6,6 +6,7 @@ import isValidated from "../middlewares/md.isValidated";
 import isAuthenticated from "../middlewares/md.isAuthenticated";
 import attachCurrentUser from "../middlewares/md.attachCurrentUser";
 import requiredRole from "../middlewares/md.requiredRole";
+import createError from "http-errors";
 
 const router = Router();
 
@@ -24,7 +25,7 @@ export default (app: Router) => {
       .trim()
       .escape(),
     isValidated,
-    async (req: Request, res: Response) => {
+    async (req: Request, res: Response, next: NextFunction) => {
       const { body } = req;
       const { username, password } = body;
       try {
@@ -32,13 +33,13 @@ export default (app: Router) => {
           username,
           password
         );
-        if (result.user) {
-          res.status(200).json(result);
+        if (result instanceof createError.HttpError) {
+          next(result);
         } else {
-          res.status(500).send();
+          res.status(200).json(result);
         }
       } catch (e) {
-        res.status(401).send(e + "");
+        next(createError(500, "Internal Server Error"));
       }
     }
   );
@@ -67,13 +68,17 @@ export default (app: Router) => {
     isAuthenticated,
     attachCurrentUser,
     requiredRole("admin"),
-    async (req: Request, res: Response) => {
+    async (req: Request, res: Response, next: NextFunction) => {
       const { body } = req;
       try {
         const result = await Container.get(AuthService).signup(body);
-        res.status(200).send(result);
+        if (result instanceof createError.HttpError) {
+          next(result);
+        } else {
+          res.status(200).send(result);
+        }
       } catch (e) {
-        res.status(401).send(e);
+        next(createError(500, "Internal Server Error"));
       }
     }
   );

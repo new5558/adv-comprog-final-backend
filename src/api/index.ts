@@ -11,11 +11,11 @@ router.all("/endpoints", (_: Request, res: Response) => {
   });
 });
 
-auth(router);
-user(router);
-
 router.get("/", (_: Request, res: Response) => {
   res.status(200).json({ value: "Server works" });
 });
+
+auth(router);
+user(router);
 
 export default router;

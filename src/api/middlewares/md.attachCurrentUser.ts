@@ -1,5 +1,6 @@
 import UserModel from "../../models/user";
 import { Request, Response, NextFunction } from "express";
+import createError from "http-errors";
 
 export default async (req: Request, res: Response, next: NextFunction) => {
   const { decodedUser } = req;
@@ -8,7 +9,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
     (await UserModel.findById(decodedUser.data._id).select("-password"));
   req.currentUser = userRecord;
   if (!userRecord) {
-    return res.status(401).end("User not found");
+    return next(createError(401, "User not found"));
   } else {
     return next();
   }

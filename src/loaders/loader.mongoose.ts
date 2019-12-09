@@ -11,7 +11,7 @@ export default async () => {
   mongoose.connection.on("error", err => {
     console.log("err", err);
   });
-  mongoose.connection.on("connected", (err, res) => {
+  mongoose.connection.on("connected", (_, __) => {
     console.log("mongoose is connected");
   });
   return connection.connection.db;
