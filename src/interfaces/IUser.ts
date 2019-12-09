@@ -22,7 +22,7 @@ export interface IUserInputDTO {
   password: string;
   faculty: number;
   major: string;
-  system: number;
+  studentType: StudentType;
   degree: Degree;
   registeredCourse: Schema.Types.ObjectId[];
 }

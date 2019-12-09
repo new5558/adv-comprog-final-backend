@@ -10,7 +10,7 @@ export default class AuthService {
   constructor() {}
 
   public async signup(userInfo: IUserInputDTO): Promise<any> {
-    const { username, password, name, role } = userInfo;
+    const { username, password } = userInfo;
     const userRecord = await UserModel.findOne({ username });
     if (userRecord) {
       return createError(409, "User already exists");
@@ -20,10 +20,8 @@ export default class AuthService {
       const passwordHashed = bcrypt.hashSync(password, salt);
       const userRecord = await UserModel.create({
         password: passwordHashed,
-        username,
-        role,
+        ...userInfo,
         salt,
-        name
       });
       await userRecord.save();
       return {

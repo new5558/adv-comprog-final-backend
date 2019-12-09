@@ -33,6 +33,22 @@ export const signupValidator = () => {
     body("role")
       .isString()
       .trim()
+      .escape(),
+    body("faculty")
+      .isNumeric()
+      .trim()
+      .escape(),
+    body("major")
+      .isString()
+      .trim()
+      .escape(),
+    body("studentType")
+      .isNumeric()
+      .trim()
+      .escape(),
+    body("degree")
+      .isNumeric()
+      .trim()
       .escape()
   ];
 };
