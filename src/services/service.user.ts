@@ -83,7 +83,7 @@ export default class UserService {
     const courseToRegisters = courseValidationResults.filter(course => {
       return !(course instanceof createError.HttpError);
     });
-    console.log("validationResult", courseValidationResults);
+    // console.log("validationResult", courseValidationResults);
     const courseToRegistersBySection = groupBy(
       courseToRegisters,
       course => course.sectionNumber
