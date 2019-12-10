@@ -96,8 +96,7 @@ export default class UserService {
           status: 0
         } as RegisteredCourse)
     );
-    console.log(courseToSaveInUserDB, "bra bra", userInfo);
-    const result = await this.userModel.update(
+    await this.userModel.update(
       { _id: userInfo._id },
       {
         $push: {
@@ -107,8 +106,6 @@ export default class UserService {
         }
       }
     );
-    console.log("result", result);
-
     Promise.all(
       Object.keys(courseToRegistersBySection).map(async key => {
         const section = {
@@ -210,8 +207,8 @@ export default class UserService {
     );
     if (
       registeredCourse &&
-      registeredCourse.status === 2 &&
-      registeredCourse.grade <= 5
+      (registeredCourse.status === 0 ||
+        (registeredCourse.status === 1 && registeredCourse.grade <= 5))
     ) {
       return false;
     }
