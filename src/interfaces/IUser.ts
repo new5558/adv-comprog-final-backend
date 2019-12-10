@@ -1,7 +1,7 @@
-import { Schema } from "mongoose";
+import { Schema, Document } from "mongoose";
 import {Degree, StudentType, Role} from './ICommon';
 
-export interface IUser {
+export interface IUser extends Document {
   _id: Schema.Types.ObjectId;
   name: string;
   username: string;

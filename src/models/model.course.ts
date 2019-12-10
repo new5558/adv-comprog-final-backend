@@ -5,7 +5,7 @@ const CourseSchema = new mongoose.Schema({
   _id: Schema.Types.ObjectId,
   year: String,
   semester: Number,
-  number: String,
+  courseNumber: String,
   midtermDate: Date,
   finalDate: Date,
   name: String,
@@ -15,8 +15,10 @@ const CourseSchema = new mongoose.Schema({
   faculty: Number,
   requirement: [Schema.Types.ObjectId],
   credit: Number,
+  degree: Number,
   section: [
     {
+      sectionNumber: Number,
       startTime: Date,
       endTime: Date,
       room: String,
@@ -25,11 +27,10 @@ const CourseSchema = new mongoose.Schema({
       capacity: String,
       enrolledStudent: [Schema.Types.ObjectId]
     }
-  ],
-  degree: Number
+  ]
 });
 
-export default mongoose.model<ICourse & mongoose.Document>(
+export default mongoose.model<ICourse>(
   "course",
   CourseSchema,
   "courses"

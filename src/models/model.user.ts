@@ -13,7 +13,7 @@ const UserSchema = new mongoose.Schema({
   registeredCourse: [Schema.Types.ObjectId]
 });
 
-export default mongoose.model<IUser & mongoose.Document>(
+export default mongoose.model<IUser>(
   "user",
   UserSchema,
   "users"

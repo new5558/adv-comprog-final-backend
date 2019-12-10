@@ -1,26 +1,25 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import UserModel from "../models/model.user";
 import { IUser, IUserInputDTO } from "../interfaces/IUser";
-import { Service } from "typedi";
+import { Service, Inject } from "typedi";
 import createError from "http-errors";
+import { Model } from "mongoose";
 
 @Service()
 export default class AuthService {
-  constructor() {}
+  constructor(@Inject("userModel") private userModel: Model<IUser>) {}
 
   public async signup(userInfo: IUserInputDTO): Promise<any> {
     const { username, password } = userInfo;
-    const existingUserRecord = await UserModel.findOne({ username });
+    const existingUserRecord = await this.userModel.findOne({ username });
     if (existingUserRecord) {
       return createError(409, "User already exists");
     }
     const salt = bcrypt.genSaltSync(10);
     const passwordHashed = bcrypt.hashSync(password, salt);
-    delete userInfo.password;
-    const userRecord = await UserModel.create({
-      password: passwordHashed,
+    const userRecord = await this.userModel.create({
       ...userInfo,
+      password: passwordHashed,
       salt
     });
     await userRecord.save();
@@ -35,7 +34,7 @@ export default class AuthService {
   }
 
   public async login(username: string, password: string): Promise<any> {
-    const userRecord = await UserModel.findOne({ username });
+    const userRecord = await this.userModel.findOne({ username });
     if (!userRecord) {
       return createError(404, "User not found");
     }
