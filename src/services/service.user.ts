@@ -77,13 +77,20 @@ export default class UserService {
         if (!isCourseAlreadyRegistered) {
           return createError(403, "Course already registered");
         }
+        return courseToRegister;
       }
-      return courseToRegister;
+      return createError(403, "Course not found");
     });
     const courseToRegisters = courseValidationResults.filter(course => {
       return !(course instanceof createError.HttpError);
     });
+    const courseToNotRegisters = courseValidationResults.filter(course => {
+      return course instanceof createError.HttpError;
+    });
     // console.log("validationResult", courseValidationResults);
+    if(courseToRegisters.length === 0) {
+      return createError(403, courseToNotRegisters);
+    }
     const courseToRegistersBySection = groupBy(
       courseToRegisters,
       course => course.sectionNumber
@@ -126,6 +133,7 @@ export default class UserService {
         );
       })
     );
+    return courseToRegisters;
   }
 
   private checkRegistrationPeriod(

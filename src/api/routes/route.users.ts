@@ -34,10 +34,13 @@ export default (app: Router) => {
           body,
           currentUser
         );
+        if (result instanceof Error) {
+          return next(result);
+        }
+        return res.status(200).json(result);
       } catch (e) {
-        console.log(e);
+        next(e);
       }
-      next(createError(501, "Not Implemented"));
     }
   );
 
