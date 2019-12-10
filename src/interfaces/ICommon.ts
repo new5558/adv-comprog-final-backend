@@ -53,8 +53,31 @@ export enum Degree {
   year4,
   year5,
   year6,
+  master,
+  doctoral,
+  other
+}
+
+export enum RequiredDegree {
   bachelor,
   master,
   doctoral,
   other
+}
+
+export enum Grade {
+  A,
+  B,
+  C,
+  D,
+  S,
+  U,
+  F,
+  W,
+  M,
+}
+
+export enum CourseUserStatus {
+  ungraded,
+  graded
 }

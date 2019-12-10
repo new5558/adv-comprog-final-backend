@@ -21,6 +21,7 @@
     "express-validator": "^6.3.0",
     "http-errors": "^1.7.3",
     "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.15",
     "mongoose": "^5.7.12",
     "nodemon": "^2.0.1",
     "reflect-metadata": "^0.1.13",
@@ -35,6 +36,7 @@
     "@types/express-list-endpoints": "^4.0.0",
     "@types/http-errors": "^1.6.3",
     "@types/jsonwebtoken": "^8.3.5",
+    "@types/lodash": "^4.14.149",
     "@types/mongoose": "^5.5.32",
     "ts-node": "^8.5.2",
     "typescript": "^3.7.2"

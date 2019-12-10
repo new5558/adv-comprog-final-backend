@@ -7,7 +7,8 @@ import { Model } from "mongoose";
 
 @Service()
 export default class AuthService {
-  constructor(@Inject("userModel") private userModel: Model<IUser>) {}
+  @Inject('userModel')
+  userModel: Model<IUser>;
 
   public async signup(userInfo: IUserInputDTO): Promise<any> {
     const { username, password } = userInfo;

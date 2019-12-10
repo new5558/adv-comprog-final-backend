@@ -5,6 +5,6 @@ import depedencyInjectionLoader from './loader.di';
 
 export default async({expressApp} : any) => {
     await mongooseLoader();
-    depedencyInjectionLoader();
     await expressLoader({ app: expressApp });
+    depedencyInjectionLoader();
 }

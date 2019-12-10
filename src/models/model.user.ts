@@ -10,11 +10,9 @@ const UserSchema = new mongoose.Schema({
   major: String,
   studentType: Number,
   degree: Number,
-  registeredCourse: [Schema.Types.ObjectId]
+  registeredCourses: [
+    { id: Schema.Types.ObjectId, grade: Number, status: Number }
+  ]
 });
 
-export default mongoose.model<IUser>(
-  "user",
-  UserSchema,
-  "users"
-);
+export default mongoose.model<IUser>("user", UserSchema, "users");

@@ -30,7 +30,7 @@ export default (app: Router) => {
         }
         return res.status(200).json(result);
       } catch (e) {
-        return next(createError(500, "Internal Server Error"));
+        return next(e);
       }
     }
   );
@@ -51,7 +51,7 @@ export default (app: Router) => {
         }
         return res.status(200).send(result);
       } catch (e) {
-        return next(createError(500, "Internal Server Error"));
+        return next(e);
       }
     }
   );

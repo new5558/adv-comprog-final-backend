@@ -10,11 +10,15 @@ export default () => {
     const models: InjectionModel[] = [
       {
         name: "userModel",
-        model: require("../models/user").default
+        model: require("../models/model.user").default
       },
       {
         name: "courseModel",
-        model: require("../models/user").default
+        model: require("../models/model.course").default
+      },
+      {
+        name: "academicYearModel",
+        model: require("../models/model.academicYear").default
       }
     ];
     models.forEach(m => {

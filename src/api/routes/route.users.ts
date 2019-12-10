@@ -19,8 +19,14 @@ export default (app: Router) => {
     }
   );
 
-  router.post("/register", (req: Request, res: Response, next: NextFunction) => {
-    Container.get(UserService);
+  router.post("/register", 
+  isAuthenticated,
+  attachCurrentUser, async (req: Request, res: Response, next: NextFunction) => {
+    const { body, currentUser } = req;
+    try { 
+      const result = await Container.get(UserService).register(body, currentUser);
+    } catch(e) {
+    }
     next(createError(501, "Not Implemented"));
   })
 

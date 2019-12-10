@@ -2,7 +2,6 @@ import mongoose, { Schema } from "mongoose";
 import { ICourse } from "../interfaces/ICourse";
 
 const CourseSchema = new mongoose.Schema({
-  _id: Schema.Types.ObjectId,
   year: String,
   semester: Number,
   courseNumber: String,

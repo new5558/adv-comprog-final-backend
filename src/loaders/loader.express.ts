@@ -1,6 +1,7 @@
 import cors from "cors";
 import express, { Request, Response, NextFunction } from "express";
-import createError from "http-errors";
+import routes from "../api/index";
+import createError, { HttpError } from "http-errors";
 
 declare global {
   namespace Express {
@@ -16,24 +17,31 @@ export default ({ app }: any) => {
   app.use(express.json());
   app.use(express.urlencoded());
 
-  app.use(
-    (
-      error: createError.HttpError,
-      _: Request,
-      __: Response,
-      next: NextFunction
-    ) => {
-      if (process.env.NODE_ENV !== "production") {
-        console.log(error);
-      }
-      if (error instanceof SyntaxError) {
-        if (error.status === 400 && "body" in error) {
-          return next(createError(400, "Bad Request"));
-        }
-        return next(createError(500, "Internal Server Error"));
-      }
-      return next();
+  app.use(routes);
+
+  app.use((error: HttpError, _: Request, __: Response, next: NextFunction) => {
+    if (process.env.NODE_ENV !== "production") {
+      console.log(error);
     }
-  );
+    if (error instanceof HttpError) {
+      return next(error);
+    }
+    if (
+      error instanceof SyntaxError &&
+      error.status === 400 &&
+      "body" in error
+    ) {
+      return next(createError(400, "Bad Request"));
+    }
+    return next(createError(500, "Internal Server Error"));
+  });
+
+  app.use((_: Request, __: Response, next: NextFunction) => {
+    next(createError(404, "Not Found"));
+  });
+
+  app.use((error: HttpError, _: Request, res: Response, __: NextFunction) => {
+    res.status(error.status).send(error);
+  });
   return app;
 };
