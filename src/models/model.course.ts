@@ -2,6 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import { ICourse } from "../interfaces/ICourse";
 
 const CourseSchema = new mongoose.Schema({
+  uuid: String,
   year: String,
   semester: Number,
   courseNumber: String,
@@ -14,7 +15,7 @@ const CourseSchema = new mongoose.Schema({
   faculty: Number,
   requirement: [Schema.Types.ObjectId],
   credit: Number,
-  degree: Number,
+  requiredDegree: Number,
   section: [
     {
       sectionNumber: Number,

@@ -52,3 +52,17 @@ export const signupValidator = () => {
       .escape()
   ];
 };
+
+export const registerValidator = () => {
+  return [
+    body().isArray(),
+    body("*.uuid")
+      .isString()
+      .trim()
+      .escape(),
+    body("*.sectionNumber")
+      .isString()
+      .trim()
+      .escape()
+  ];
+};

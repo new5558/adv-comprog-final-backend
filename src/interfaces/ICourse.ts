@@ -3,6 +3,7 @@ import { Semester, StudentType, RequiredDegree } from "./ICommon";
 
 export interface ICourse extends Document {
   _id: Schema.Types.ObjectId;
+  uuid: string;
   year: string;
   semester: Semester;
   courseNumber: string;
@@ -16,10 +17,11 @@ export interface ICourse extends Document {
   requirement: Schema.Types.ObjectId[];
   credit: number;
   section: Section[];
-  degree: RequiredDegree;
+  requiredDegree: RequiredDegree;
 }
 
 export interface ICourseInputDTO {
+  uuid: ICourse["uuid"];
   year: ICourse["year"];
   semester: ICourse["semester"];
   courseNumber: ICourse["courseNumber"];
@@ -33,16 +35,12 @@ export interface ICourseInputDTO {
   requirement: ICourse["requirement"];
   credit: ICourse["credit"];
   section: ICourse["section"];
-  degree: ICourse["degree"];
+  requiredDegree: ICourse["requiredDegree"];
 }
 
 export interface ICourseRegisterDTO {
-  _id: ICourse["_id"];
-  year: ICourse["year"];
-  semester: ICourse["semester"];
-  courseNumber: ICourse["courseNumber"];
+  uuid: ICourse["uuid"];
   sectionNumber: Section["sectionNumber"];
-  credit: ICourse["credit"];
 }
 
 export interface Section {

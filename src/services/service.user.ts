@@ -9,25 +9,27 @@ import groupBy from "lodash/groupBy";
 
 @Service()
 export default class UserService {
-  @Inject("CourseModel")
+  @Inject("courseModel")
   courseModel: Model<ICourse>;
 
   @Inject("academicYearModel")
   AcademicYearModel: Model<IAcademicYear>;
 
   public async register(courses: ICourseRegisterDTO[], userInfo: IUserInfoDTO) {
+    const registrationYears = await this.AcademicYearModel.find({});
+    const uuids = courses.map(course => course.uuid);
+    const currentCourses = await this.courseModel.find({
+      uuid: { $in: uuids }
+    });
+
     // check credit full
-    const totalCredit = courses.reduce((acc: number, course) => {
+    const totalCredit = currentCourses.reduce((acc: number, course) => {
       return acc + course.credit;
     }, 0);
     if (totalCredit > 21) {
       return createError(422, "Total credit exceeded 21");
     }
-    const registrationYears = await this.AcademicYearModel.find({});
-    const courseNumbers = courses.map(course => course.courseNumber);
-    const currentCourses = await this.courseModel.find({
-      courseNumber: { $in: courseNumbers }
-    });
+
     const courseValidationResults: (
       | ICourseRegisterDTO
       | HttpError
@@ -52,7 +54,7 @@ export default class UserService {
         // check studentType and degree
         if (
           userInfo.studentType === currentCourse.studentType &&
-          !this.checkDegree(userInfo.degree, currentCourse.degree)
+          !this.checkDegree(userInfo.degree, currentCourse.requiredDegree)
         ) {
           return createError(
             403,
@@ -61,15 +63,13 @@ export default class UserService {
         }
 
         // check capacity full?
-        const studentCapacity = currentCourse.section.reduce(
-          (acc, section) => {
-            acc.totalAmount + section.enrolledStudent.length;
-            acc.capacity + section.capacity;
-            return acc;
-          },
-          { totalAmount: 0, capacity: 0 }
+        const currentSection = currentCourse.section.find(
+          section => section.sectionNumber === courseToRegister.sectionNumber
         );
-        if (studentCapacity.totalAmount <= studentCapacity.capacity) {
+        if (
+          currentSection &&
+          currentSection.enrolledStudent.length <= currentSection.capacity
+        ) {
           return createError(403, "Course capacity full");
         }
 
@@ -104,26 +104,30 @@ export default class UserService {
     const courseToRegisters = courseValidationResults.filter(course => {
       return !(course instanceof createError.HttpError);
     });
+    console.log("validationResult", courseValidationResults);
     const courseToRegistersBySection = groupBy(
       courseToRegisters,
       course => course.sectionNumber
     );
 
-    console.log(courseToRegistersBySection, "section");
-    Object.keys(courseToRegistersBySection)
-      .map(key => ({ key, value: courseToRegistersBySection[key] }))
-      .forEach(section => {
-        this.courseModel.updateMany(
+    Promise.all(
+      Object.keys(courseToRegistersBySection).map(async key => {
+        const section = {
+          order: Number(key) - 1,
+          uuid: courseToRegistersBySection[key].map(course => course.uuid)
+        };
+        await this.courseModel.updateMany(
           {
-            _id: {
-              $in: section.value
+            uuid: {
+              $in: section.uuid
             }
           },
           {
-            $push: { [`section.${section.key}.enrolledStudent`]: userInfo._id }
+            $push: { [`section.${section.order}.enrolledStudent`]: userInfo._id }
           }
         );
-      });
+      })
+    );
   }
 
   private checkDegree(
