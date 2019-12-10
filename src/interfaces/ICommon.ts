@@ -74,7 +74,7 @@ export enum Grade {
   U,
   F,
   W,
-  M,
+  M
 }
 
 export enum CourseUserStatus {

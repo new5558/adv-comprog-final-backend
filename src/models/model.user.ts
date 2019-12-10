@@ -11,7 +11,7 @@ const UserSchema = new mongoose.Schema({
   studentType: Number,
   degree: Number,
   registeredCourses: [
-    { id: Schema.Types.ObjectId, grade: Number, status: Number }
+    { uuid: String, grade: Number, status: Number }
   ]
 });
 

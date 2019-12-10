@@ -13,7 +13,7 @@ const CourseSchema = new mongoose.Schema({
   engName: String,
   studentType: Number,
   faculty: Number,
-  requirement: [Schema.Types.ObjectId],
+  requirement: [String], //uuid
   credit: Number,
   requiredDegree: Number,
   section: [

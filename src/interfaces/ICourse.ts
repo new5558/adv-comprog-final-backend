@@ -14,7 +14,7 @@ export interface ICourse extends Document {
   engName: string;
   studentType: StudentType;
   faculty: number;
-  requirement: Schema.Types.ObjectId[];
+  requirement: string[]; // uuid
   credit: number;
   section: Section[];
   requiredDegree: RequiredDegree;

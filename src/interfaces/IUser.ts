@@ -17,7 +17,7 @@ export interface IUser extends Document {
 }
 
 export interface RegisteredCourse {
-  id: Schema.Types.ObjectId;
+  uuid: string;
   grade: Grade;
   status: CourseUserStatus;
 }
