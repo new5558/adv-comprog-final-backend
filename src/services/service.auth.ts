@@ -4,6 +4,7 @@ import { IUser, IUserInputDTO } from "../interfaces/IUser";
 import { Service, Inject } from "typedi";
 import createError from "http-errors";
 import UserDataService from "../data-services/db.service.user";
+import config from "../config";
 
 @Service()
 export default class AuthService {
@@ -61,7 +62,7 @@ export default class AuthService {
       name: user.name,
       username: user.username
     };
-    const signature = process.env.SECRET as string;
+    const signature = config.secret as string;
     const expiration = "2h";
 
     return jwt.sign({ data }, signature, { expiresIn: expiration });

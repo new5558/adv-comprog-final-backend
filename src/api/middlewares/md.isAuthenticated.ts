@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import createError from "http-errors";
+import config from "../../config";
 
 const getTokenFromHeader = (req: Request) => {
   if (
@@ -15,7 +16,7 @@ export default (req: Request, _: Response, next: NextFunction) => {
   const token = getTokenFromHeader(req);
   if (token) {
     try {
-      const decodedUser = jwt.verify(token, process.env.SECRET as string);
+      const decodedUser = jwt.verify(token, config.secret as string);
       req.decodedUser = decodedUser && (decodedUser as any).data;
       return next();
     } catch {

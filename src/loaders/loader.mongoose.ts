@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
+import config from "../config";
 
 export default async () => {
   const connection = await mongoose.connect(
-    process.env.databaseURL as string,
+    config.databaseURL as string,
     {
       useNewUrlParser: true,
       useUnifiedTopology: true

@@ -2,6 +2,7 @@ import cors from "cors";
 import express, { Request, Response, NextFunction } from "express";
 import routes from "../api/index";
 import createError, { HttpError } from "http-errors";
+import config from "../config";
 
 declare global {
   namespace Express {
@@ -20,7 +21,7 @@ export default ({ app }: any) => {
   app.use(routes);
 
   app.use((error: HttpError, _: Request, __: Response, next: NextFunction) => {
-    if (process.env.NODE_ENV !== "production") {
+    if (config.env !== "production") {
       console.log(error);
     }
     if (error instanceof HttpError) {
