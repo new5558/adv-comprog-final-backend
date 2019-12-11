@@ -1,12 +1,10 @@
 import { Service, Inject } from "typedi";
 import {
   ICourseRegisterDTO,
-  ICourse,
   CourseToRegisterBySections,
   CourseUnioned
 } from "../interfaces/ICourse";
-import { IUserInfoDTO, RegisteredCourse } from "../interfaces/IUser";
-import { IAcademicYear } from "../interfaces/IAcademicYear";
+import { RegisteredCourse } from "../interfaces/IUser";
 import { Schema } from "mongoose";
 import createError from "http-errors";
 import groupBy from "lodash/groupBy";
@@ -14,6 +12,14 @@ import UserDataService from "../data-services/db.service.user";
 import { unionByKey } from "../helpers/utils";
 import CourseDataService from "../data-services/db.service.course";
 import AcademicYearDataService from "../data-services/db.service.academicYear";
+import {
+  checkRegistrationPeriod,
+  checkCreditAvailibity,
+  checkStudentTypeAndDegree,
+  checkCourseCapacity,
+  checkPriorCourseRequirement,
+  checkCourseAlreadyRegistered
+} from "../helpers/utils.register";
 
 @Service()
 export default class RegistrationsService {
@@ -37,7 +43,7 @@ export default class RegistrationsService {
       uuids
     );
 
-    const isCreditavailable = this.checkCreditAvailibity(coursesToRegister);
+    const isCreditavailable = checkCreditAvailibity(coursesToRegister);
     if (!isCreditavailable) {
       throw createError(422, "Total credit exceeded 21");
     }
@@ -51,20 +57,20 @@ export default class RegistrationsService {
       if (!courseToRegister.courseNumber) {
         return createError(403, "Course not found");
       }
-      const isInRegistrationPeriod = this.checkRegistrationPeriod(
+      const isInRegistrationPeriod = checkRegistrationPeriod(
         courseToRegister,
         registrationYears
       );
-      const isStudentTypeAndDegreeMatched = this.checkStudentTypeAndDegree(
+      const isStudentTypeAndDegreeMatched = checkStudentTypeAndDegree(
         courseToRegister,
         userInfo
       );
-      const hasSeatsAvailable = this.checkCourseCapacity(courseToRegister);
-      const isPriorCourseRequiredRegistered = this.checkPriorCourseRequirement(
+      const hasSeatsAvailable = checkCourseCapacity(courseToRegister);
+      const isPriorCourseRequiredRegistered = checkPriorCourseRequirement(
         courseToRegister,
         userInfo
       );
-      const isCourseAlreadyRegistered = this.checkCourseAlreadyRegistered(
+      const isCourseAlreadyRegistered = checkCourseAlreadyRegistered(
         courseToRegister,
         userInfo
       );
@@ -120,101 +126,5 @@ export default class RegistrationsService {
       userInfo
     );
     return courseValidationResults;
-  }
-
-  private checkRegistrationPeriod(
-    currentCourse: ICourse,
-    registrationYears: IAcademicYear[]
-  ) {
-    // check year and semester
-    const currentDate = new Date();
-    const registrationYear = registrationYears.find(
-      academicYear =>
-        academicYear.year === currentCourse.year &&
-        academicYear.semester === currentCourse.semester
-    );
-    if (
-      registrationYear &&
-      registrationYear.registrationStartDate < currentDate &&
-      registrationYear.registrationEndDate > currentDate
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  private checkStudentTypeAndDegree(
-    currentCourse: ICourse,
-    userInfo: IUserInfoDTO
-  ) {
-    if (!(userInfo.studentType === currentCourse.studentType)) {
-      return false;
-    }
-    const { requiredDegree } = currentCourse;
-    if (requiredDegree >= 0 && requiredDegree <= 5) {
-      return true;
-    }
-    return userInfo.degree === currentCourse.requiredDegree + 5;
-  }
-
-  private checkCourseCapacity(courseToRegister: CourseUnioned) {
-    // check capacity full?
-    const currentSection = courseToRegister.section.find(
-      section => section.sectionNumber === courseToRegister.sectionNumber
-    );
-    if (
-      currentSection &&
-      currentSection.enrolledStudent.length <= currentSection.capacity
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  private checkPriorCourseRequirement(
-    currentCourse: ICourse,
-    userInfo: IUserInfoDTO
-  ) {
-    // check condition pass
-    let conditionPass = true;
-    currentCourse.requirement.forEach(requiredCourse => {
-      const _registeredCourse = userInfo.registeredCourses.find(
-        registeredCourse => registeredCourse.uuid === requiredCourse
-      );
-      if (!_registeredCourse || _registeredCourse.grade >= 5) {
-        conditionPass = false;
-      }
-    });
-    return conditionPass;
-  }
-
-  private checkCourseAlreadyRegistered(
-    currentCourse: ICourse,
-    userInfo: IUserInfoDTO
-  ) {
-    // check if course already registered?
-    const registeredCourse = userInfo.registeredCourses.find(
-      registeredCourse => registeredCourse.uuid === currentCourse.uuid
-    );
-    if (
-      registeredCourse &&
-      (registeredCourse.status === 0 ||
-        (registeredCourse.status === 1 && registeredCourse.grade <= 5))
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  private checkCreditAvailibity(coursesToRegister: ICourse[]) {
-    // check credit full
-    // to do, recheck with registered course
-    const totalCredit = coursesToRegister.reduce((acc: number, course) => {
-      return acc + course.credit;
-    }, 0);
-    if (totalCredit > 21) {
-      return false;
-    }
-    return true;
   }
 }

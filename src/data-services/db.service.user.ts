@@ -1,25 +1,34 @@
 import { Service, Inject } from "typedi";
 import { Model, Schema, DocumentQuery } from "mongoose";
-import { IUser, RegisteredCourse, IUserInfoDTO, IUserInputDTO } from "../interfaces/IUser";
+import {
+  IUser,
+  RegisteredCourse,
+  IUserInfoDTO,
+  IUserInputDTO
+} from "../interfaces/IUser";
 import createError from "http-errors";
 
 @Service()
 export default class UserDataService {
   @Inject("userModel")
   userModel: Model<IUser>;
-  
+
   async findUserByUsername(username: string): Promise<IUser | null> {
     return await this.userModel.findOne({ username });
   }
-  
-  async createUser(userInfo: IUserInputDTO, salt: string, passwordHashed: string): Promise<IUser> {
+
+  async createUser(
+    userInfo: IUserInputDTO,
+    salt: string,
+    passwordHashed: string
+  ): Promise<IUser> {
     return await this.userModel.create({
       ...userInfo,
       password: passwordHashed,
       salt
     });
   }
-  
+
   async getUserInfo(userID: Schema.Types.ObjectId): Promise<IUserInfoDTO> {
     const fullUserInfo = await this.getUserRecord(userID);
     return fullUserInfo;
