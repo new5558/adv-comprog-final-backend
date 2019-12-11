@@ -29,7 +29,7 @@ export default class UserService {
       return acc + course.credit;
     }, 0);
     if (totalCredit > 21) {
-      return createError(422, "Total credit exceeded 21");
+      throw createError(422, "Total credit exceeded 21");
     }
 
     const courseValidationResults: (
@@ -88,7 +88,7 @@ export default class UserService {
       return course instanceof createError.HttpError;
     });
     if(courseToRegisters.length === 0) {
-      return createError(403, courseToNotRegisters);
+      throw  createError(403, courseToNotRegisters);
     }
     const courseToRegistersBySection = groupBy(
       courseToRegisters,
@@ -132,7 +132,7 @@ export default class UserService {
         );
       })
     );
-    return courseToRegisters;
+    return courseValidationResults;
   }
 
   private checkRegistrationPeriod(

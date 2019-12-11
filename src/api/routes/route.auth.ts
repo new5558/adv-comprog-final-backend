@@ -5,8 +5,8 @@ import isValidated from "../middlewares/md.isValidated";
 import isAuthenticated from "../middlewares/md.isAuthenticated";
 import attachCurrentUser from "../middlewares/md.attachCurrentUser";
 import requiredRole from "../middlewares/md.requiredRole";
-import createError from "http-errors";
 import { loginValidator, signupValidator } from "../middlewares/md.validators";
+import { wrapCatch } from "../../helpers/utils";
 
 const router = Router();
 
@@ -17,7 +17,7 @@ export default (app: Router) => {
     "/login",
     loginValidator(),
     isValidated,
-    async (req: Request, res: Response, next: NextFunction) => {
+    wrapCatch(async (req: Request, res: Response, next: NextFunction) => {
       const { body } = req;
       const { username, password } = body;
       try {
@@ -25,14 +25,11 @@ export default (app: Router) => {
           username,
           password
         );
-        if (result instanceof createError.HttpError) {
-          return next(result);
-        }
         return res.status(200).json(result);
       } catch (e) {
         return next(e);
       }
-    }
+    })
   );
 
   router.post(
@@ -42,17 +39,14 @@ export default (app: Router) => {
     isAuthenticated,
     attachCurrentUser,
     requiredRole("admin"),
-    async (req: Request, res: Response, next: NextFunction) => {
+    wrapCatch(async (req: Request, res: Response, next: NextFunction) => {
       const { body } = req;
       try {
         const result = await Container.get(AuthService).signup(body);
-        if (result instanceof createError.HttpError) {
-          return next(result);
-        }
         return res.status(200).send(result);
       } catch (e) {
         return next(e);
       }
-    }
+    })
   );
 };

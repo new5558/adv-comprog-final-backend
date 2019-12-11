@@ -14,7 +14,7 @@ export interface ICourse extends Document {
   engName: string;
   studentType: StudentType;
   faculty: number;
-  requirement: string[]; // uuid
+  requirement: string[]; //uuid of required course
   credit: number;
   section: Section[];
   requiredDegree: RequiredDegree;

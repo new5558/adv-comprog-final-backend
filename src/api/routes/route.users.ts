@@ -6,6 +6,7 @@ import Container from "typedi";
 import UserService from "../../services/service.user";
 import { registerValidator } from "../middlewares/md.validators";
 import isValidated from "../middlewares/md.isValidated";
+import { wrapCatch } from "../../helpers/utils";
 
 const router = express.Router();
 
@@ -27,21 +28,18 @@ export default (app: Router) => {
     isValidated,
     isAuthenticated,
     attachCurrentUser,
-    async (req: Request, res: Response, next: NextFunction) => {
+    wrapCatch(async (req: Request, res: Response, next: NextFunction) => {
       const { body, currentUser } = req;
       try {
         const result = await Container.get(UserService).register(
           body,
           currentUser
         );
-        if (result instanceof Error) {
-          return next(result);
-        }
         return res.status(200).json(result);
       } catch (e) {
         next(e);
       }
-    }
+    })
   );
 
   router.get(

@@ -14,7 +14,7 @@ export default class AuthService {
     const { username, password } = userInfo;
     const existingUserRecord = await this.userModel.findOne({ username });
     if (existingUserRecord) {
-      return createError(409, "User already exists");
+      throw createError(409, "User already exists");
     }
     const salt = bcrypt.genSaltSync(10);
     const passwordHashed = bcrypt.hashSync(password, salt);
@@ -37,11 +37,11 @@ export default class AuthService {
   public async login(username: string, password: string): Promise<any> {
     const userRecord = await this.userModel.findOne({ username });
     if (!userRecord) {
-      return createError(404, "User not found");
+      throw  createError(404, "User not found");
     }
     const isPasswordValid = bcrypt.compareSync(password, userRecord.password);
     if (!isPasswordValid) {
-      return createError(401, "Incorrect password");
+      throw  createError(401, "Incorrect password");
     }
     return {
       user: {
