@@ -10,22 +10,103 @@
       td {
         border: 1px solid black;
       }
+      td {
+        width: 33%;
+      }
+      .table-header {
+        font-weight: bold;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+      }
+      .user-info {
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+      }
+      .user {
+        margin: 0 10px;
+      }
     </style>
   </head>
   <body>
     <div style="width: 85%; margin: 0 7.5%;">
-      <div style="text-align: center; padding-left: 50px;">
-        <h3>Student Report</h3>
+      <div class="container">
+        <div>
+          <h1>Withdraw Paper</h1>
+          <h2>ใบคำร้องขอถอนรายวิชา</h2>
+        </div>
+        <div class="user-info">
+          <div class="user">
+            <div>Name: <%= name %></div>
+            <div>Student id: <%= studentID %></div>
+          </div>
+          <div class="user">
+            <div>Year: <%= year %></div>
+            <div>Semester: <%= semester %></div>
+          </div>
+        </div>
         <table>
-          <% if (subjects.length > 0) { %> <% subjects.forEach(subject => {%>
+          <tr class="table-header">
+            <td>Course Number</td>
+            <td>Course Name</td>
+            <td>Credit</td>
+          </tr>
+          <% if (coursesToWithdraw.length > 0) { %> <%
+          coursesToWithdraw.forEach(course => {%>
           <tr>
-            <td><%= subject.name %></td>
-            <td><%= subject.email %></td>
-            <td><%= subject.city %></td>
-            <td><%= subject.country %></td>
+            <td><%= course.courseNumber %></td>
+            <td><%= course.engName %></td>
+            <td><%= course.credit %></td>
           </tr>
           <% });%> <% }%>
         </table>
+
+        ีแต้มเฉลี.ยสะสม (GPAX) …………………….….………..…...… สถานภาพการเป็ นนิสิต ปกติ
+        วิทยาทัณฑ์ ครั1งที. …………… ในภาคการศึกษาปัจจุบันได้ลงทะเบียนเรียนไว้
+        ………………. รายวิชา ………………. หน่วยกิต มีความประสงค์จะขอถอนรายวิชา ดังนี1
+        รหัสรายวิชา Course No. ชื.อย่อรายวิชา Abbreviated name วันสอบปลายภาค
+        Final Exam date ความเห็นผ้สอน/ผ ู ้รับผิดชอบรายวิชา ู Instructor’s
+        Comment เห็นชอบ Approved ไม่เห็นชอบ Disapproved ลงนาม Signature
+        วัน/เดือน/ปี Date
+        เหตุผลของการถอนรายวิชาหลังกาหนด...............................................
+        ํ
+        ......................................................................................................................................................
+        .....................................................................................................................................................................................................
+        .....................................................................................................................................................................................................
+        ข้าพเจ้าจะติดตามผลการพิจารณาคําร้องด้วยตนเองที.สํานักงานการทะเบียน
+        หรือตรวจสอบจากผลการลงทะเบียนเรียนทาง https://www.reg.chula.ac.th
+        หลังจากยื.นคําร้อง แล้ว 5 วันทําการ นิสิตลงนาม Student’s signature
+        ..….………….………………………………..………... …………/……………../……………
+        ………………………………………………………………………………………… นิสิตระดับปริญญาตรี Undergraduate
+        student สํานักงานการทะเบียน จุฬ าลงกรณ์มหาวิทยาลัย ทะเบียนคณะ เลขทีNรับ
+        ………………………. วันทีNรับ ……………………….. เวลา …………………………... ผู้รับ …………………………...
+        ภาคการศึกษา ………………..…………………..……… ปี การศึกษา ………………..………..
+        เลขประจําตัวนิสิต Student ID 590706 ความเห็นอาจารย์ที.ปรึกษา Advisor’s
+        comment …………………………...…………………………………………………………….……………………..
+        ……………………………………………………………………………………………….………………. ลงนาม Signature
+        ……………………………………………….….….……….. (…………………………………….………………………..…..) ….………..……./
+        ………..…………../ …………….……. ความเห็นนายทะเบียนคณะ Faculty Registrar’s comment
+        …………………………...…………………………………………………………….……………………..
+        ……………………………………………………………………………………………….………………. ลงนาม Signature
+        ………………..………………………….………..…………….. (…………………………………….………………………..…..)
+        …….………..……./ ………..…………../ …………….……. อธิการบดี President อนุมัติ
+        ไม่อนุมัติ ………………………………………………………………………………………………………………………
+        ……………………………………………………………………………………………………………………… . ลงนาม Signature
+        ………………...………………………….………..………… (………………….……………….……………………...…..)
+        …………...………………………….………..……………… …………...………………………….………..……………… …….………..……./
+        ………..…………../ …………….……. Approved Disapproved ……………. Office of the
+        Registrar, Chulalongkorn University L M 5 4 6 7 After 5 working days
+        once this request has been submitted, I will check the result at the
+        Office of the Registrar or via https://www.reg.chula.ac.th Should there
+        be any objection, please come in person with relevant documents
+        immediately. 3 สํานักงานการทะเบียน เลขทีNรับ ………………………. วันทีNรับ
+        ……………………….. เวลา …………………………... ผู้รับ …………………………... which will be
+        resulted in the total credits registered this semester to be courses
+        credits หากต้องการทักท้วงผลการพิจารณา โปรดติดต่อด้วยตนเอง
+        พร้อมยื.นหลักฐานและเอกสารเพิ.มเติมที. สํานักงานการทะเบียน โดยด่วน
       </div>
     </div>
   </body>

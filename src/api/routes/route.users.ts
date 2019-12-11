@@ -1,6 +1,5 @@
 import express, { Request, Response, NextFunction, Router } from "express";
 import isAuthenticated from "../middlewares/md.isAuthenticated";
-import createError from "http-errors";
 import Container from "typedi";
 import RegistrationService from "../../services/service.registration";
 import {
@@ -10,6 +9,7 @@ import {
 import isValidated from "../middlewares/md.isValidated";
 import { wrapCatch } from "../../helpers/utils";
 import UserService from "../../services/service.user";
+import createPDF from "../../helpers/utils.pdf";
 
 const router = express.Router();
 
@@ -92,17 +92,18 @@ export default (app: Router) => {
   );
 
   router.post(
-    "/widthdraw",
+    "/withdraw",
     withdrawValidator(),
     isValidated,
     isAuthenticated,
     wrapCatch(async (req: Request, res: Response, next: NextFunction) => {
       const { decodedUser, body } = req;
-      const subjectsToWithdraw = await Container.get(
+      const withdrawalResult = await Container.get(
         RegistrationService
       ).withdraw(decodedUser._id, body);
-      res.render("pdf", subjectsToWithdraw);
-      // next(createError(501, "Not Implemented"));
+      const buffer = await createPDF(withdrawalResult);
+      res.contentType("application/pdf");
+      res.send(buffer);
     })
   );
 };

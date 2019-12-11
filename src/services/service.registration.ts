@@ -1,5 +1,5 @@
 import { Service, Inject } from "typedi";
-import { ICourseRegisterDTO, CourseUnioned } from "../interfaces/ICourse";
+import { ICourseRegisterDTO, CourseUnioned, WithdawalResult } from "../interfaces/ICourse";
 import { RegisteredCourse } from "../interfaces/IUser";
 import { Schema } from "mongoose";
 import createError, { HttpError } from "http-errors";
@@ -152,10 +152,7 @@ export default class RegistrationsService {
     throw createError(403, "Not in registration period");
   }
 
-  async withdraw(
-    userID: Schema.Types.ObjectId,
-    subjectsToWithdraw: Schema.Types.ObjectId[]
-  ) {
+  async withdraw(userID: Schema.Types.ObjectId, subjectsToWithdraw: string[]): Promise<WithdawalResult> {
     const {
       registeredCourses,
       username,
@@ -169,8 +166,8 @@ export default class RegistrationsService {
       const currentTime = new Date();
       const subjectsForWithdrawValidated = subjectsToWithdraw
         .filter(subjectToWithdraw => {
-          const course = registeredCourses.find(course =>
-            compareObjectID(course.data._id, subjectToWithdraw)
+          const course = registeredCourses.find(
+            subject => subject.data.uuid === subjectToWithdraw
           );
           return (
             course &&
@@ -179,8 +176,8 @@ export default class RegistrationsService {
           );
         })
         .map(subjectToWithdraw => {
-          const course = registeredCourses.find(course =>
-            compareObjectID(course.data._id, subjectToWithdraw)
+          const course = registeredCourses.find(
+            course => course.data.uuid === subjectToWithdraw
           );
           if (!course) {
             return createError(404, "Course not found");
@@ -188,8 +185,11 @@ export default class RegistrationsService {
           if (course.data.finalDate) {
             return createError(403, "The final examination has been arranged");
           }
-          if (course.status !== 1) {
-            return createError(403, "The course is already graded");
+          if (course.status === 3) {
+            return createError(
+              403,
+              "The course is already graded or not sucessfully registered"
+            );
           }
           if (
             currentTime < currentAcademicYear.withdrawalStartDate ||
@@ -213,6 +213,9 @@ export default class RegistrationsService {
           : courseToWithdrawSuccess.push(course);
       });
       if (courseToWithdrawSuccess.length === 0) {
+        if (courseToWithdrawFailed.length === 0) {
+          throw createError(403, "Cannot match any course to withdraw");
+        }
         throw createError(403, courseToWithdrawFailed);
       }
 
@@ -227,6 +230,6 @@ export default class RegistrationsService {
         name
       };
     }
-    throw createError(500, 'Not in registration peroid');
+    throw createError(500, "Not in registration peroid");
   }
 }

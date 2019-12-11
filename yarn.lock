@@ -36,6 +36,11 @@
   dependencies:
     "@types/express" "*"
 
+"@types/ejs@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@types/ejs/-/ejs-3.0.0.tgz#eeed4cd7eb731138da4d8f65634207cb343f4608"
+  integrity sha512-6mUaeRO+zTcoFzjXZgYybf5/FtXXyWmfkGheS04iPOEmE+lV3qBkcqG0WnabmJD2ATSPTlWDBMUpxdE80JqUPQ==
+
 "@types/express-jwt@^0.0.42":
   version "0.0.42"
   resolved "https://registry.yarnpkg.com/@types/express-jwt/-/express-jwt-0.0.42.tgz#4f04e1fadf9d18725950dc041808a4a4adf7f5ae"
@@ -74,6 +79,13 @@
     "@types/body-parser" "*"
     "@types/express-serve-static-core" "*"
     "@types/serve-static" "*"
+
+"@types/html-pdf@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@types/html-pdf/-/html-pdf-2.2.0.tgz#be9dec1170c400cad7a1ec91824e0b93722f30e7"
+  integrity sha512-h5GXl/LPOHe6x3vRqikGIeB7c5oEVDJRV3k4xBLnnwt0S7fbuz8Kg5VHoqIbuyari8lvmVnag2asqNCJVpoHCQ==
+  dependencies:
+    "@types/node" "*"
 
 "@types/http-errors@^1.6.3":
   version "1.6.3"

@@ -1,7 +1,8 @@
 import { Schema, Document } from "mongoose";
 import { Semester, StudentType, RequiredDegree } from "./ICommon";
 import { Dictionary } from "lodash";
-import { RegisteredCourse } from "./IUser";
+import { RegisteredCourse, IUser } from "./IUser";
+import { HttpError } from "http-errors";
 
 export interface ICourse extends Document {
   _id: Schema.Types.ObjectId;
@@ -61,4 +62,15 @@ export interface CourseToRegisterBySections
 
 export interface CourseUnioned extends ICourse {
   sectionNumber: number;
+}
+
+export interface WithdawalResult {
+  courseToWithdrawSuccess: any[];
+  courseToWithdrawFailed: HttpError[];
+  year: ICourse["year"];
+  semester: ICourse["semester"];
+  username: IUser["username"];
+  studentType: ICourse["studentType"];
+  faculty: ICourse["faculty"];
+  name: IUser["name"];
 }
