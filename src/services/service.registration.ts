@@ -164,7 +164,7 @@ export default class RegistrationsService {
       name
     } = await this.userDataService.getFullUserInfo(userID);
     const currentAcademicYear = await this.academicYearDataService.getCurrentAcademicYear();
-    
+
     if (currentAcademicYear) {
       const currentTime = new Date();
       const subjectsForWithdrawValidated = subjectsToWithdraw
@@ -204,21 +204,21 @@ export default class RegistrationsService {
           };
         });
 
-      const courseToRegistersSuccess: any[] = [];
-      const courseToRegistersFailed: HttpError[] = [];
+      const courseToWithdrawSuccess: any[] = [];
+      const courseToWithdrawFailed: HttpError[] = [];
       subjectsForWithdrawValidated.forEach(course => {
         const error = course instanceof HttpError;
         error
-          ? courseToRegistersFailed.push(course as HttpError)
-          : courseToRegistersSuccess.push(course);
+          ? courseToWithdrawFailed.push(course as HttpError)
+          : courseToWithdrawSuccess.push(course);
       });
-      if (courseToRegistersSuccess.length === 0) {
-        throw createError(403, courseToRegistersFailed);
+      if (courseToWithdrawSuccess.length === 0) {
+        throw createError(403, courseToWithdrawFailed);
       }
 
       return {
-        courseToRegistersSuccess,
-        courseToRegistersFailed,
+        courseToWithdrawSuccess,
+        courseToWithdrawFailed,
         year: currentAcademicYear.year,
         semester: currentAcademicYear.semester,
         username,
@@ -227,5 +227,6 @@ export default class RegistrationsService {
         name
       };
     }
+    throw createError(500, 'Not in registration peroid');
   }
 }

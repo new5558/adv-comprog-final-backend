@@ -16,7 +16,7 @@ export default class CourseDataService {
     return await this.academicYearModel.findOne({
       $and: [
         { registrationStartDate: { $lte: currentDate } },
-        { registrationEndDate: { $gte: currentDate } }
+        { endDate: { $gte: currentDate } }
       ]
     });
   }
