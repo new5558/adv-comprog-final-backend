@@ -1,28 +1,29 @@
 import { ICourse, CourseUnioned } from "../interfaces/ICourse";
 import { IAcademicYear } from "../interfaces/IAcademicYear";
 import { IUserInfoDTO } from "../interfaces/IUser";
-import { ObjectID } from "mongodb";
-import { Schema } from "mongoose";
+import { compareObjectID } from "./utils";
 
 export const checkRegistrationPeriod = (
   currentCourse: ICourse,
-  registrationYears: IAcademicYear[]
+  currentAcademicYear: IAcademicYear | null
 ) => {
   // check year and semester
   const currentDate = new Date();
-  const registrationYear = registrationYears.find(
-    academicYear =>
-      academicYear.year === currentCourse.year &&
-      academicYear.semester === currentCourse.semester
-  );
-  if (
-    registrationYear &&
-    registrationYear.registrationStartDate < currentDate &&
-    registrationYear.registrationEndDate > currentDate
-  ) {
-    return false;
+  if (currentAcademicYear) {
+    const {
+      registrationStartDate,
+      registrationEndDate,
+      year,
+      semester
+    } = currentAcademicYear;
+    return (
+      registrationStartDate < currentDate &&
+      registrationEndDate > currentDate &&
+      currentCourse.year === year &&
+      currentCourse.semester === semester
+    );
   }
-  return true;
+  return false;
 };
 
 export const checkStudentTypeAndDegree = (
@@ -74,10 +75,9 @@ export const checkCourseAlreadyRegistered = (
   currentCourse: ICourse,
   userInfo: IUserInfoDTO
 ) => {
-  console.log(currentCourse._id, userInfo.registeredCourses, 'check already registered');;
   // check if course already registered?
-  const registeredCourse = userInfo.registeredCourses.find(
-    registeredCourse => compareObjectID(currentCourse._id, registeredCourse.data)
+  const registeredCourse = userInfo.registeredCourses.find(registeredCourse =>
+    compareObjectID(currentCourse._id, registeredCourse.data)
   );
   if (
     registeredCourse &&
@@ -100,7 +100,3 @@ export const checkCreditAvailibity = (coursesToRegister: ICourse[]) => {
   }
   return true;
 };
-
-export const compareObjectID = (id1: Schema.Types.ObjectId, id2: Schema.Types.ObjectId) => {
-  return JSON.stringify(id1) === JSON.stringify(id2);
-}

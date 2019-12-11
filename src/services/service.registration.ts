@@ -38,7 +38,7 @@ export default class RegistrationsService {
     userID: Schema.Types.ObjectId
   ) {
     const userInfo = await this.userDataService.getUserInfo(userID);
-    const registrationYears = await this.academicYearDataService.getAcademicYear();
+    const currentAcademicYear = await this.academicYearDataService.getCurrentAcademicYear();
     const uuids = courses.map(course => course.uuid);
     const coursesToRegister = await this.courseDataService.findCourses(
       uuids
@@ -60,7 +60,7 @@ export default class RegistrationsService {
       }
       const isInRegistrationPeriod = checkRegistrationPeriod(
         courseToRegister,
-        registrationYears
+        currentAcademicYear
       );
       const isStudentTypeAndDegreeMatched = checkStudentTypeAndDegree(
         courseToRegister,

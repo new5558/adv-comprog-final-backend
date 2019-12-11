@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import _ from "lodash";
+import { Schema } from "mongoose";
 
 export const wrapCatch = (fn: any) => (
   req: Request,
@@ -16,3 +17,7 @@ export const unionByKey = (arr1: any, arr2: any, key: string) => {
     .values()
     .value();
 };
+
+export const compareObjectID = (id1: Schema.Types.ObjectId, id2: Schema.Types.ObjectId) => {
+  return JSON.stringify(id1) === JSON.stringify(id2);
+}
