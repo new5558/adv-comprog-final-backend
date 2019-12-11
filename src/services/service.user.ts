@@ -38,7 +38,7 @@ export default class UserService {
     )[] = courses.map((courseToRegister, index) => {
       const currentCourse = currentCourses[index];
       if (currentCourse) {
-        const isInRegistrationPeroid = this.checkRegistrationPeriod(
+        const isInRegistrationPeriod = this.checkRegistrationPeriod(
           currentCourse,
           registrationYears
         );
@@ -59,7 +59,7 @@ export default class UserService {
           userInfo
         );
 
-        if (!isInRegistrationPeroid) {
+        if (!isInRegistrationPeriod) {
           return createError(403, "Not in registration period");
         }
         if (!isStudentTypeAndDegreeMatched) {
@@ -87,7 +87,6 @@ export default class UserService {
     const courseToNotRegisters = courseValidationResults.filter(course => {
       return course instanceof createError.HttpError;
     });
-    // console.log("validationResult", courseValidationResults);
     if(courseToRegisters.length === 0) {
       return createError(403, courseToNotRegisters);
     }
