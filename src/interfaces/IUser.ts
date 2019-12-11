@@ -1,5 +1,6 @@
 import { Schema, Document } from "mongoose";
 import {Degree, StudentType, Role, Grade, CourseUserStatus} from './ICommon';
+import { ICourse } from "./ICourse";
 
 
 export interface IUser extends Document {
@@ -18,6 +19,7 @@ export interface IUser extends Document {
 
 export interface RegisteredCourse {
   uuid: string;
+  data: ICourse & Schema.Types.ObjectId;
   grade: Grade;
   status: CourseUserStatus;
 }
@@ -44,4 +46,10 @@ export interface IUserInputDTO {
   studentType: IUser['studentType'];
   degree: IUser['degree'];
   registeredCourses: IUser['registeredCourses'];
+}
+
+export interface IUserDecodedDTO {
+    _id: IUser['_id'];
+    name: IUser['name'];
+    username: IUser['username'];
 }

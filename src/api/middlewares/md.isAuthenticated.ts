@@ -16,7 +16,7 @@ export default (req: Request, _: Response, next: NextFunction) => {
   if (token) {
     try {
       const decodedUser = jwt.verify(token, process.env.SECRET as string);
-      req.decodedUser = decodedUser;
+      req.decodedUser = decodedUser && (decodedUser as any).data;
       return next();
     } catch {
       return next(createError(401, "Unauthorized"));

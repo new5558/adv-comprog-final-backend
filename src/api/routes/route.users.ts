@@ -1,12 +1,12 @@
 import express, { Request, Response, NextFunction, Router } from "express";
 import isAuthenticated from "../middlewares/md.isAuthenticated";
-import attachCurrentUser from "../middlewares/md.attachCurrentUser";
 import createError from "http-errors";
 import Container from "typedi";
-import UserService from "../../services/service.user";
+import RegistrationsService from "../../services/service.registration";
 import { registerValidator } from "../middlewares/md.validators";
 import isValidated from "../middlewares/md.isValidated";
 import { wrapCatch } from "../../helpers/utils";
+import UserService from "../../services/service.user";
 
 const router = express.Router();
 
@@ -16,10 +16,13 @@ export default (app: Router) => {
   router.get(
     "/",
     isAuthenticated,
-    attachCurrentUser,
-    (req: Request, res: Response) => {
-      res.status(200).json(req.currentUser);
-    }
+    wrapCatch(async (req: Request, res: Response) => {
+      const { decodedUser } = req;
+      const fullUserInfo = await Container.get(UserService).getFullUserInfo(
+        decodedUser._id
+      );
+      res.status(200).json(fullUserInfo);
+    })
   );
 
   router.post(
@@ -27,14 +30,37 @@ export default (app: Router) => {
     registerValidator(),
     isValidated,
     isAuthenticated,
-    attachCurrentUser,
     wrapCatch(async (req: Request, res: Response, next: NextFunction) => {
-      const { body, currentUser } = req;
-      const result = await Container.get(UserService).register(
+      const { body, decodedUser } = req;
+      const result = await Container.get(RegistrationsService).register(
         body,
-        currentUser
+        decodedUser._id
       );
-      return res.status(200).json(result);
+      res.status(200).json(result);
+    })
+  );
+
+  router.get(
+    "/info",
+    isAuthenticated,
+    wrapCatch(async (req: Request, res: Response) => {
+      const { decodedUser } = req;
+      const fullUserInfo = await Container.get(UserService).getUserInfo(
+        decodedUser._id
+      );
+      res.status(200).json(fullUserInfo);
+    })
+  );
+
+  router.get(
+    "/courses",
+    isAuthenticated,
+    wrapCatch(async (req: Request, res: Response) => {
+      const { decodedUser } = req;
+      const fullUserInfo = await Container.get(UserService).getCourses(
+        decodedUser._id
+      );
+      res.status(200).json(fullUserInfo);
     })
   );
 

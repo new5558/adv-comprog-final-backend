@@ -21,7 +21,7 @@ export default (app: Router) => {
       const { body } = req;
       const { username, password } = body;
       const result = await Container.get(AuthService).login(username, password);
-      return res.status(200).json(result);
+      res.status(200).json(result);
     })
   );
 
@@ -35,7 +35,7 @@ export default (app: Router) => {
     wrapCatch(async (req: Request, res: Response, next: NextFunction) => {
       const { body } = req;
       const result = await Container.get(AuthService).signup(body);
-      return res.status(200).send(result);
+      res.status(200).send(result);
     })
   );
 };

@@ -3,26 +3,28 @@ import jwt from "jsonwebtoken";
 import { IUser, IUserInputDTO } from "../interfaces/IUser";
 import { Service, Inject } from "typedi";
 import createError from "http-errors";
-import { Model } from "mongoose";
+import UserDataService from "../data-services/db.service.user";
 
 @Service()
 export default class AuthService {
-  @Inject('userModel')
-  userModel: Model<IUser>;
+  @Inject()
+  userDataService: UserDataService;
 
   public async signup(userInfo: IUserInputDTO): Promise<any> {
     const { username, password } = userInfo;
-    const existingUserRecord = await this.userModel.findOne({ username });
+    const existingUserRecord = await this.userDataService.findUserByUsername(
+      username
+    );
     if (existingUserRecord) {
       throw createError(409, "User already exists");
     }
     const salt = bcrypt.genSaltSync(10);
     const passwordHashed = bcrypt.hashSync(password, salt);
-    const userRecord = await this.userModel.create({
-      ...userInfo,
-      password: passwordHashed,
-      salt
-    });
+    const userRecord = await this.userDataService.createUser(
+      userInfo,
+      salt,
+      passwordHashed
+    );
     await userRecord.save();
     return {
       message: "Create user success",
@@ -35,13 +37,13 @@ export default class AuthService {
   }
 
   public async login(username: string, password: string): Promise<any> {
-    const userRecord = await this.userModel.findOne({ username });
+    const userRecord = await this.userDataService.findUserByUsername(username);
     if (!userRecord) {
-      throw  createError(404, "User not found");
+      throw createError(404, "User not found");
     }
     const isPasswordValid = bcrypt.compareSync(password, userRecord.password);
     if (!isPasswordValid) {
-      throw  createError(401, "Incorrect password");
+      throw createError(401, "Incorrect password");
     }
     return {
       user: {
