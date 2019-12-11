@@ -6,7 +6,7 @@ import {
 } from "../interfaces/ICourse";
 import { RegisteredCourse } from "../interfaces/IUser";
 import { Schema } from "mongoose";
-import createError from "http-errors";
+import createError, { HttpError } from "http-errors";
 import groupBy from "lodash/groupBy";
 import UserDataService from "../data-services/db.service.user";
 import { unionByKey } from "../helpers/utils";
@@ -20,6 +20,7 @@ import {
   checkPriorCourseRequirement,
   checkCourseAlreadyRegistered
 } from "../helpers/utils.register";
+import { Dictionary } from "express-serve-static-core";
 
 @Service()
 export default class RegistrationsService {
@@ -39,7 +40,7 @@ export default class RegistrationsService {
     const userInfo = await this.userDataService.getUserInfo(userID);
     const registrationYears = await this.academicYearDataService.getAcademicYear();
     const uuids = courses.map(course => course.uuid);
-    const coursesToRegister = await this.courseDataService.findCoursesByUniqueId(
+    const coursesToRegister = await this.courseDataService.findCourses(
       uuids
     );
 
@@ -93,34 +94,31 @@ export default class RegistrationsService {
       if (!isCourseAlreadyRegistered) {
         return createError(403, "Course already registered");
       }
-      return courseToRegister;
+      return {
+        data: courseToRegister._id,
+        sectionNumber: courseToRegister.sectionNumber,
+        status: 0
+      } as RegisteredCourse;
     });
     const courseToRegistersSuccess = courseValidationResults.filter(course => {
       return !(course instanceof createError.HttpError);
-    });
+    }) as RegisteredCourse[];
     const courseToRegistersFailed = courseValidationResults.filter(course => {
       return course instanceof createError.HttpError;
-    });
+    }) as HttpError[];
     if (courseToRegistersSuccess.length === 0) {
       throw createError(403, courseToRegistersFailed);
     }
+
     const courseToRegistersBySection = groupBy(
       courseToRegistersSuccess,
       course => course.sectionNumber
-    ) as CourseToRegisterBySections;
-
-    const courseToSaveInUserDB = courseToRegistersSuccess.map(
-      course =>
-        ({
-          uuid: course.uuid,
-          status: 0
-        } as RegisteredCourse)
-    );
+    ) as Dictionary<RegisteredCourse[]>;
+    
     await this.userDataService.insertNewCourses(
-      courseToSaveInUserDB,
+      courseToRegistersSuccess,
       userInfo._id
     );
-
     await this.courseDataService.registerStudents(
       courseToRegistersBySection,
       userInfo

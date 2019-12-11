@@ -13,7 +13,7 @@ const CourseSchema = new mongoose.Schema({
   engName: String,
   studentType: Number,
   faculty: Number,
-  requirement: [String], //uuid of required course
+  requirement: [{ type: Schema.Types.ObjectId, ref: "course" }],
   credit: Number,
   requiredDegree: Number,
   section: [
@@ -30,8 +30,4 @@ const CourseSchema = new mongoose.Schema({
   ]
 });
 
-export default mongoose.model<ICourse>(
-  "course",
-  CourseSchema,
-  "courses"
-);
+export default mongoose.model<ICourse>("course", CourseSchema, "courses");

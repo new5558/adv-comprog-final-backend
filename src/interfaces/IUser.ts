@@ -18,8 +18,8 @@ export interface IUser extends Document {
 }
 
 export interface RegisteredCourse {
-  uuid: string;
   data: ICourse & Schema.Types.ObjectId;
+  sectionNumber: number;
   grade: Grade;
   status: CourseUserStatus;
 }

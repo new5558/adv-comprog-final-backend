@@ -1,6 +1,8 @@
 import { ICourse, CourseUnioned } from "../interfaces/ICourse";
 import { IAcademicYear } from "../interfaces/IAcademicYear";
 import { IUserInfoDTO } from "../interfaces/IUser";
+import { ObjectID } from "mongodb";
+import { Schema } from "mongoose";
 
 export const checkRegistrationPeriod = (
   currentCourse: ICourse,
@@ -59,7 +61,7 @@ export const checkPriorCourseRequirement = (
   let conditionPass = true;
   currentCourse.requirement.forEach(requiredCourse => {
     const _registeredCourse = userInfo.registeredCourses.find(
-      registeredCourse => registeredCourse.uuid === requiredCourse
+      registeredCourse => compareObjectID(registeredCourse.data, requiredCourse)
     );
     if (!_registeredCourse || _registeredCourse.grade >= 5) {
       conditionPass = false;
@@ -72,9 +74,10 @@ export const checkCourseAlreadyRegistered = (
   currentCourse: ICourse,
   userInfo: IUserInfoDTO
 ) => {
+  console.log(currentCourse._id, userInfo.registeredCourses, 'check already registered');;
   // check if course already registered?
   const registeredCourse = userInfo.registeredCourses.find(
-    registeredCourse => registeredCourse.uuid === currentCourse.uuid
+    registeredCourse => compareObjectID(currentCourse._id, registeredCourse.data)
   );
   if (
     registeredCourse &&
@@ -88,7 +91,7 @@ export const checkCourseAlreadyRegistered = (
 
 export const checkCreditAvailibity = (coursesToRegister: ICourse[]) => {
   // check credit full
-  // to do, recheck with registered course
+  // @Todo recheck with registered course
   const totalCredit = coursesToRegister.reduce((acc: number, course) => {
     return acc + course.credit;
   }, 0);
@@ -97,3 +100,7 @@ export const checkCreditAvailibity = (coursesToRegister: ICourse[]) => {
   }
   return true;
 };
+
+export const compareObjectID = (id1: Schema.Types.ObjectId, id2: Schema.Types.ObjectId) => {
+  return JSON.stringify(id1) === JSON.stringify(id2);
+}

@@ -1,6 +1,7 @@
 import { Schema, Document } from "mongoose";
 import { Semester, StudentType, RequiredDegree } from "./ICommon";
 import { Dictionary } from "lodash";
+import { RegisteredCourse } from "./IUser";
 
 export interface ICourse extends Document {
   _id: Schema.Types.ObjectId;
@@ -15,7 +16,7 @@ export interface ICourse extends Document {
   engName: string;
   studentType: StudentType;
   faculty: number;
-  requirement: string[]; //uuid of required course
+  requirement: Schema.Types.ObjectId[];
   credit: number;
   section: Section[];
   requiredDegree: RequiredDegree;
@@ -56,11 +57,7 @@ export interface Section {
 }
 
 export interface CourseToRegisterBySections
-  extends Dictionary<
-    (ICourse & {
-      sectionNumber: number;
-    })[]
-  > {}
+  extends Dictionary<RegisteredCourse[]> {}
 
 export interface CourseUnioned extends ICourse {
   sectionNumber: number;

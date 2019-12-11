@@ -61,7 +61,7 @@ export const registerValidator = () => {
       .trim()
       .escape(),
     body("*.sectionNumber")
-      .isString()
+      .isNumeric()
       .trim()
       .escape()
   ];

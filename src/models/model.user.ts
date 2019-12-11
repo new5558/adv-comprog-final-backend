@@ -11,7 +11,12 @@ const UserSchema = new mongoose.Schema({
   studentType: Number,
   degree: Number,
   registeredCourses: [
-    { data: {type: Schema.Types.ObjectId, ref: 'course'}, grade: Number, status: Number }
+    {
+      data: { type: Schema.Types.ObjectId, ref: "course" },
+      grade: Number,
+      status: Number,
+      sectionNumber: Number
+    }
   ]
 });
 
