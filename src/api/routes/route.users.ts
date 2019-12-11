@@ -71,9 +71,17 @@ export default (app: Router) => {
     }
   );
 
-  router.get("/grade", (req: Request, res: Response, next: NextFunction) => {
-    next(createError(501, "Not Implemented"));
-  });
+  router.get(
+    "/grade",
+    isAuthenticated,
+    wrapCatch(async (req: Request, res: Response, next: NextFunction) => {
+      const { decodedUser } = req;
+      const userGrades = await Container.get(UserService).getGrades(
+        decodedUser._id
+      );
+      res.status(200).json(userGrades);
+    })
+  );
 
   router.post(
     "/widthdraw",

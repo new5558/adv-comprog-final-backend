@@ -57,7 +57,6 @@ export default class UserDataService {
     courseToSaveInUserDB: RegisteredCourse[],
     userID: Schema.Types.ObjectId
   ): Promise<IUserInfoDTO> {
-    console.log(courseToSaveInUserDB, 'courseToSave');
     return await this.userModel.update(
       { _id: userID },
       {

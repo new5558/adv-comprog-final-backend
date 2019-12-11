@@ -40,9 +40,7 @@ export default class RegistrationsService {
     const userInfo = await this.userDataService.getUserInfo(userID);
     const currentAcademicYear = await this.academicYearDataService.getCurrentAcademicYear();
     const uuids = courses.map(course => course.uuid);
-    const coursesToRegister = await this.courseDataService.findCourses(
-      uuids
-    );
+    const coursesToRegister = await this.courseDataService.findCourses(uuids);
 
     const isCreditavailable = checkCreditAvailibity(coursesToRegister);
     if (!isCreditavailable) {
@@ -114,7 +112,7 @@ export default class RegistrationsService {
       courseToRegistersSuccess,
       course => course.sectionNumber
     ) as Dictionary<RegisteredCourse[]>;
-    
+
     await this.userDataService.insertNewCourses(
       courseToRegistersSuccess,
       userInfo._id
