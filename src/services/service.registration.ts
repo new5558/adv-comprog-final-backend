@@ -1,16 +1,11 @@
 import { Service, Inject } from "typedi";
-import {
-  ICourseRegisterDTO,
-  CourseToRegisterBySections,
-  CourseUnioned,
-  ICourse
-} from "../interfaces/ICourse";
+import { ICourseRegisterDTO, CourseUnioned } from "../interfaces/ICourse";
 import { RegisteredCourse } from "../interfaces/IUser";
 import { Schema } from "mongoose";
 import createError, { HttpError } from "http-errors";
 import groupBy from "lodash/groupBy";
 import UserDataService from "../data-services/db.service.user";
-import { unionByKey } from "../helpers/utils";
+import { unionByKey, compareObjectID } from "../helpers/utils";
 import CourseDataService from "../data-services/db.service.course";
 import AcademicYearDataService from "../data-services/db.service.academicYear";
 import {
@@ -99,13 +94,15 @@ export default class RegistrationsService {
         status: 0
       } as RegisteredCourse;
     });
+
     const courseToRegistersSuccess = courseValidationResults.filter(course => {
-      return !(course instanceof createError.HttpError);
+      return !(course instanceof HttpError);
     }) as RegisteredCourse[];
-    const courseToRegistersFailed = courseValidationResults.filter(course => {
-      return course instanceof createError.HttpError;
-    }) as HttpError[];
+
     if (courseToRegistersSuccess.length === 0) {
+      const courseToRegistersFailed = courseValidationResults.filter(course => {
+        return course instanceof HttpError;
+      }) as HttpError[];
       throw createError(403, courseToRegistersFailed);
     }
 
@@ -167,29 +164,61 @@ export default class RegistrationsService {
       name
     } = await this.userDataService.getFullUserInfo(userID);
     const currentAcademicYear = await this.academicYearDataService.getCurrentAcademicYear();
+    
     if (currentAcademicYear) {
       const currentTime = new Date();
-      const subjectsForWithdrawValidated = registeredCourses
-        .filter(course => {
+      const subjectsForWithdrawValidated = subjectsToWithdraw
+        .filter(subjectToWithdraw => {
+          const course = registeredCourses.find(course =>
+            compareObjectID(course.data._id, subjectToWithdraw)
+          );
           return (
+            course &&
             course.data.year === currentAcademicYear.year &&
-            course.data.semester === currentAcademicYear.semester &&
-            course.status === 1 &&
-            currentTime > currentAcademicYear.withdrawalStartDate &&
-            currentTime < currentAcademicYear.withdrawalEndDate &&
-            subjectsToWithdraw.find((course.data as any).uuid)
+            course.data.semester === currentAcademicYear.semester
           );
         })
-        .map(course => {
+        .map(subjectToWithdraw => {
+          const course = registeredCourses.find(course =>
+            compareObjectID(course.data._id, subjectToWithdraw)
+          );
+          if (!course) {
+            return createError(404, "Course not found");
+          }
+          if (course.data.finalDate) {
+            return createError(403, "The final examination has been arranged");
+          }
+          if (course.status !== 1) {
+            return createError(403, "The course is already graded");
+          }
+          if (
+            currentTime < currentAcademicYear.withdrawalStartDate ||
+            currentTime > currentAcademicYear.withdrawalEndDate
+          ) {
+            return createError(403, "Not in withdrawwal period");
+          }
           return {
             courseNumber: course.data.courseNumber,
             engName: course.data.engName,
-            credit: course.data.credit,
-            finalDate: course.data.finalDate
+            credit: course.data.credit
           };
         });
+
+      const courseToRegistersSuccess: any[] = [];
+      const courseToRegistersFailed: HttpError[] = [];
+      subjectsForWithdrawValidated.forEach(course => {
+        const error = course instanceof HttpError;
+        error
+          ? courseToRegistersFailed.push(course as HttpError)
+          : courseToRegistersSuccess.push(course);
+      });
+      if (courseToRegistersSuccess.length === 0) {
+        throw createError(403, courseToRegistersFailed);
+      }
+
       return {
-        subjectsForWithdrawValidated,
+        courseToRegistersSuccess,
+        courseToRegistersFailed,
         year: currentAcademicYear.year,
         semester: currentAcademicYear.semester,
         username,
