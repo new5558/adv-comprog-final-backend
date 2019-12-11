@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      table {
+        border-collapse: collapse;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="width: 85%; margin: 0 7.5%;">
+      <div style="text-align: center; padding-left: 50px;">
+        <h3>Student Report</h3>
+        <table>
+          <% if (subjects.length > 0) { %> <% subjects.forEach(subject => {%>
+          <tr>
+            <td><%= subject.name %></td>
+            <td><%= subject.email %></td>
+            <td><%= subject.city %></td>
+            <td><%= subject.country %></td>
+          </tr>
+          <% });%> <% }%>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

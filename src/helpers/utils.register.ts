@@ -81,8 +81,8 @@ export const checkCourseAlreadyRegistered = (
   );
   if (
     registeredCourse &&
-    (registeredCourse.status === 0 ||
-      (registeredCourse.status === 1 && registeredCourse.grade <= 5))
+    (registeredCourse.status <= 1 ||
+      (registeredCourse.status === 3 && registeredCourse.grade <= 5))
   ) {
     return false;
   }

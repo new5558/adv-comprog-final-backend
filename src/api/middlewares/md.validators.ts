@@ -66,3 +66,13 @@ export const registerValidator = () => {
       .escape()
   ];
 };
+
+export const withdrawValidator = () => {
+  return [
+    body().isArray(),
+    body("*")
+      .isString()
+      .trim()
+      .escape(),
+  ]
+}

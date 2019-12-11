@@ -2,8 +2,11 @@ import express, { Request, Response, NextFunction, Router } from "express";
 import isAuthenticated from "../middlewares/md.isAuthenticated";
 import createError from "http-errors";
 import Container from "typedi";
-import RegistrationsService from "../../services/service.registration";
-import { registerValidator } from "../middlewares/md.validators";
+import RegistrationService from "../../services/service.registration";
+import {
+  registerValidator,
+  withdrawValidator
+} from "../middlewares/md.validators";
 import isValidated from "../middlewares/md.isValidated";
 import { wrapCatch } from "../../helpers/utils";
 import UserService from "../../services/service.user";
@@ -32,11 +35,23 @@ export default (app: Router) => {
     isAuthenticated,
     wrapCatch(async (req: Request, res: Response, next: NextFunction) => {
       const { body, decodedUser } = req;
-      const result = await Container.get(RegistrationsService).register(
+      const result = await Container.get(RegistrationService).register(
         body,
         decodedUser._id
       );
       res.status(200).json(result);
+    })
+  );
+
+  router.get(
+    "/register/result",
+    isAuthenticated,
+    wrapCatch(async (req: Request, res: Response) => {
+      const { decodedUser } = req;
+      const registerResult = await Container.get(
+        RegistrationService
+      ).getRegistrationResult(decodedUser._id);
+      res.status(200).json(registerResult);
     })
   );
 
@@ -65,13 +80,6 @@ export default (app: Router) => {
   );
 
   router.get(
-    "/register/results",
-    (req: Request, res: Response, next: NextFunction) => {
-      next(createError(501, "Not Implemented"));
-    }
-  );
-
-  router.get(
     "/grade",
     isAuthenticated,
     wrapCatch(async (req: Request, res: Response, next: NextFunction) => {
@@ -85,8 +93,16 @@ export default (app: Router) => {
 
   router.post(
     "/widthdraw",
-    (req: Request, res: Response, next: NextFunction) => {
-      next(createError(501, "Not Implemented"));
-    }
+    withdrawValidator(),
+    isValidated,
+    isAuthenticated,
+    wrapCatch(async (req: Request, res: Response, next: NextFunction) => {
+      const { decodedUser, body } = req;
+      const subjectsToWithdraw = await Container.get(
+        RegistrationService
+      ).withdraw(decodedUser._id, body);
+      res.render("pdf", subjectsToWithdraw);
+      // next(createError(501, "Not Implemented"));
+    })
   );
 };

@@ -53,3 +53,12 @@ export interface IUserDecodedDTO {
     name: IUser['name'];
     username: IUser['username'];
 }
+
+export interface IUserGrade {
+    year: ICourse['year'];
+    semester: ICourse['semester'];
+    courseNumber: ICourse['courseNumber'];
+    engName: ICourse['engName'];
+    credit: ICourse['credit'];
+    grade: RegisteredCourse['grade'];
+}

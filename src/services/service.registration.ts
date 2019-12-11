@@ -2,7 +2,8 @@ import { Service, Inject } from "typedi";
 import {
   ICourseRegisterDTO,
   CourseToRegisterBySections,
-  CourseUnioned
+  CourseUnioned,
+  ICourse
 } from "../interfaces/ICourse";
 import { RegisteredCourse } from "../interfaces/IUser";
 import { Schema } from "mongoose";
@@ -122,5 +123,80 @@ export default class RegistrationsService {
       userInfo
     );
     return courseValidationResults;
+  }
+
+  async getRegistrationResult(userID: Schema.Types.ObjectId) {
+    /* @Todo only show one result of same course, year, semester 
+    (multiple results should not happen if reattempt to register the course) */
+    const courses = (await this.userDataService.getFullUserInfo(userID))
+      .registeredCourses;
+    const currentAcademicYear = await this.academicYearDataService.getCurrentAcademicYear();
+    if (currentAcademicYear) {
+      const registrationResult = courses
+        .filter(course => {
+          return (
+            course.data.year === currentAcademicYear.year &&
+            course.data.semester === currentAcademicYear.semester &&
+            course.status <= 2
+          );
+        })
+        .map(course => {
+          return {
+            year: course.data.year,
+            semester: course.data.semester,
+            courseNumber: course.data.courseNumber,
+            engName: course.data.engName,
+            credit: course.data.credit,
+            status: course.status
+          };
+        });
+      return registrationResult;
+    }
+    throw createError(403, "Not in registration period");
+  }
+
+  async withdraw(
+    userID: Schema.Types.ObjectId,
+    subjectsToWithdraw: Schema.Types.ObjectId[]
+  ) {
+    const {
+      registeredCourses,
+      username,
+      studentType,
+      faculty,
+      name
+    } = await this.userDataService.getFullUserInfo(userID);
+    const currentAcademicYear = await this.academicYearDataService.getCurrentAcademicYear();
+    if (currentAcademicYear) {
+      const currentTime = new Date();
+      const subjectsForWithdrawValidated = registeredCourses
+        .filter(course => {
+          return (
+            course.data.year === currentAcademicYear.year &&
+            course.data.semester === currentAcademicYear.semester &&
+            course.status === 1 &&
+            currentTime > currentAcademicYear.withdrawalStartDate &&
+            currentTime < currentAcademicYear.withdrawalEndDate &&
+            subjectsToWithdraw.find((course.data as any).uuid)
+          );
+        })
+        .map(course => {
+          return {
+            courseNumber: course.data.courseNumber,
+            engName: course.data.engName,
+            credit: course.data.credit,
+            finalDate: course.data.finalDate
+          };
+        });
+      return {
+        subjectsForWithdrawValidated,
+        year: currentAcademicYear.year,
+        semester: currentAcademicYear.semester,
+        username,
+        studentType,
+        faculty,
+        name
+      };
+    }
   }
 }

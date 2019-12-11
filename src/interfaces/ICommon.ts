@@ -78,6 +78,8 @@ export enum Grade {
 }
 
 export enum CourseUserStatus {
-  ungraded,
+  pending,
+  registered,
+  registerFailed,
   graded
 }
