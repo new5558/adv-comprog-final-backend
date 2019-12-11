@@ -30,15 +30,11 @@ export default (app: Router) => {
     attachCurrentUser,
     wrapCatch(async (req: Request, res: Response, next: NextFunction) => {
       const { body, currentUser } = req;
-      try {
-        const result = await Container.get(UserService).register(
-          body,
-          currentUser
-        );
-        return res.status(200).json(result);
-      } catch (e) {
-        next(e);
-      }
+      const result = await Container.get(UserService).register(
+        body,
+        currentUser
+      );
+      return res.status(200).json(result);
     })
   );
 

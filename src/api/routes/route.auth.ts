@@ -20,15 +20,8 @@ export default (app: Router) => {
     wrapCatch(async (req: Request, res: Response, next: NextFunction) => {
       const { body } = req;
       const { username, password } = body;
-      try {
-        const result = await Container.get(AuthService).login(
-          username,
-          password
-        );
-        return res.status(200).json(result);
-      } catch (e) {
-        return next(e);
-      }
+      const result = await Container.get(AuthService).login(username, password);
+      return res.status(200).json(result);
     })
   );
 
@@ -41,12 +34,8 @@ export default (app: Router) => {
     requiredRole("admin"),
     wrapCatch(async (req: Request, res: Response, next: NextFunction) => {
       const { body } = req;
-      try {
-        const result = await Container.get(AuthService).signup(body);
-        return res.status(200).send(result);
-      } catch (e) {
-        return next(e);
-      }
+      const result = await Container.get(AuthService).signup(body);
+      return res.status(200).send(result);
     })
   );
 };
