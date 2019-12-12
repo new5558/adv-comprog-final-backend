@@ -16,9 +16,15 @@ export default class CourseDataService {
 
   // @Todo add add route for this method
   async getFullCourseInfo(uuid: string): Promise<ICourse | null> {
-    return await this.courseModel.findOne({
-      uuid
-    }).populate('requirement');
+    return await this.courseModel
+      .findOne({
+        uuid
+      })
+      .populate("requirement");
+  }
+
+  async getAllCourses(): Promise<ICourse[]> {
+    return await this.courseModel.find({});
   }
 
   async registerStudents(

@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction, Router } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import isAuthenticated from "../middlewares/md.isAuthenticated";
 import Container from "typedi";
 import RegistrationService from "../../services/service.registration";
@@ -11,7 +11,7 @@ import { wrapCatch } from "../../helpers/utils";
 import UserService from "../../services/service.user";
 import createPDF from "../../helpers/utils.pdf";
 
-const router = express.Router();
+const router = Router();
 
 export default (app: Router) => {
   app.use("/user", router);

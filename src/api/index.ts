@@ -1,6 +1,7 @@
 import { Router, Request, Response, Express } from "express";
 import auth from "./routes/route.auth";
 import user from "./routes/route.users";
+import commons from "./routes/route.commons";
 import listEndpoints from "express-list-endpoints";
 
 const router = Router();
@@ -17,5 +18,6 @@ router.get("/", (_: Request, res: Response) => {
 
 auth(router);
 user(router);
+commons(router);
 
 export default router;
