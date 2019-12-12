@@ -1,4 +1,7 @@
 import Container from "typedi";
+import userModel from "../models/model.user";
+import courseModel from "../models/model.course";
+import academicYearModel from "../models/model.academicYear";
 
 interface InjectionModel {
   name: string;
@@ -10,15 +13,15 @@ export default () => {
     const models: InjectionModel[] = [
       {
         name: "userModel",
-        model: require("../models/model.user").default
+        model: userModel
       },
       {
         name: "courseModel",
-        model: require("../models/model.course").default
+        model: courseModel
       },
       {
         name: "academicYearModel",
-        model: require("../models/model.academicYear").default
+        model: academicYearModel
       }
     ];
     models.forEach(m => {
