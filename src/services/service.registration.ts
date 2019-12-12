@@ -5,7 +5,7 @@ import { Schema } from "mongoose";
 import createError, { HttpError } from "http-errors";
 import groupBy from "lodash/groupBy";
 import UserDataService from "../data-services/db.service.user";
-import { unionByKey, compareObjectID } from "../helpers/utils";
+import { unionByKey } from "../helpers/utils";
 import CourseDataService from "../data-services/db.service.course";
 import AcademicYearDataService from "../data-services/db.service.academicYear";
 import {

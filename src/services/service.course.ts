@@ -1,7 +1,6 @@
 import { Service, Inject } from "typedi";
 import CourseDataService from "../data-services/db.service.course";
 import { ICourse } from "../interfaces/ICourse";
-import { create } from "html-pdf";
 import createHttpError = require("http-errors");
 
 @Service()

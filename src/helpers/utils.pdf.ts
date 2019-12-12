@@ -18,9 +18,13 @@ export default (withdrawalResult: WithdawalResult) => {
       },
       function(err, result) {
         if (result) {
-          pdf.create(result).toBuffer(function(err, buffer) {
-            resolve(buffer);
-          });
+          pdf
+            .create(result, {
+              phantomArgs: ["--web-security=no", "--local-url-access=false"]
+            })
+            .toBuffer(function(err, buffer) {
+              resolve(buffer);
+            });
         } else {
           console.log(err);
           throw createError(500, "Internal Server Error");
