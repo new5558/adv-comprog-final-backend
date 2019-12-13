@@ -4,6 +4,7 @@ import routes from "../api/index";
 import createError, { HttpError } from "http-errors";
 import config from "../config";
 import helmet from "helmet";
+import bodyParser from "body-parser";
 
 declare global {
   namespace Express {
@@ -16,7 +17,7 @@ declare global {
 
 export default ({ app }: any) => {
   app.use(cors());
-  app.use(express.json());
+  app.use(bodyParser.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(helmet());
   app.use(routes);
@@ -31,7 +32,8 @@ export default ({ app }: any) => {
     if (
       error instanceof SyntaxError &&
       error.status === 400 &&
-      "body" in error
+      "body" in error &&
+      error.message.indexOf("JSON")
     ) {
       return next(createError(400, "Bad Request"));
     }
