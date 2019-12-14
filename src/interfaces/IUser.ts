@@ -8,8 +8,7 @@ export interface IUser extends Document {
   name: string;
   username: string;
   password: string;
-  role: Role;
-  salt: string;
+  role: string;
   faculty: number;
   major: string;
   studentType: StudentType;
@@ -25,7 +24,6 @@ export interface RegisteredCourse {
 }
 
 export interface IUserInfoDTO {
-  _id: Schema.Types.ObjectId;
   name: IUser['name'];
   role: IUser['role'];
   username: IUser['username'];
@@ -46,12 +44,6 @@ export interface IUserInputDTO {
   studentType: IUser['studentType'];
   degree: IUser['degree'];
   registeredCourses: IUser['registeredCourses'];
-}
-
-export interface IUserDecodedDTO {
-    _id: IUser['_id'];
-    name: IUser['name'];
-    username: IUser['username'];
 }
 
 export interface IUserGrade {

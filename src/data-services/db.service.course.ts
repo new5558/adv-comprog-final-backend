@@ -1,12 +1,20 @@
 import { Service, Inject } from "typedi";
 import { Model } from "mongoose";
-import { ICourse, CourseToRegisterBySections } from "../interfaces/ICourse";
-import { IUserInfoDTO } from "../interfaces/IUser";
+import {
+  ICourse,
+  CourseToRegisterBySections,
+  ICourseInputDTO
+} from "../interfaces/ICourse";
+import { IUser } from "../interfaces/IUser";
 
-@Service()
+@Service("courseDataService")
 export default class CourseDataService {
   @Inject("courseModel")
   courseModel: Model<ICourse>;
+
+  async insertCourses(courses: ICourseInputDTO[]): Promise<ICourse[]> {
+    return await this.courseModel.insertMany(courses);
+  }
 
   async findCourses(uuids: string[]): Promise<ICourse[]> {
     return await this.courseModel.find({
@@ -29,7 +37,7 @@ export default class CourseDataService {
 
   async registerStudents(
     courseToRegistersBySection: CourseToRegisterBySections,
-    userInfo: IUserInfoDTO
+    userInfo: IUser
   ) {
     return Promise.all(
       Object.keys(courseToRegistersBySection).map(async key => {

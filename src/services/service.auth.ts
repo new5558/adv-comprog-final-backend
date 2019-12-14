@@ -8,7 +8,7 @@ import config from "../config";
 
 @Service()
 export default class AuthService {
-  @Inject()
+  @Inject("userDataService")
   userDataService: UserDataService;
 
   public async signup(userInfo: IUserInputDTO): Promise<any> {
@@ -23,7 +23,6 @@ export default class AuthService {
     const passwordHashed = bcrypt.hashSync(password, salt);
     const userRecord = await this.userDataService.createUser(
       userInfo,
-      salt,
       passwordHashed
     );
     await userRecord.save();
@@ -35,6 +34,24 @@ export default class AuthService {
         role: userRecord.role
       }
     };
+  }
+
+  public async signupMany(userInfos: IUserInputDTO[]): Promise<IUser[]> {
+    const userHashedInfos = await Promise.all(
+      userInfos.map(async userInfo => {
+        const { username, password } = userInfo;
+        const existingUserRecord = await this.userDataService.findUserByUsername(
+          username
+        );
+        if (existingUserRecord) {
+          throw createError(409, "User already exists");
+        }
+        const salt = bcrypt.genSaltSync(10);
+        userInfo.password = bcrypt.hashSync(password, salt);
+        return userInfo;
+      })
+    );
+    return await this.userDataService.createManyUsers(userHashedInfos);
   }
 
   public async login(username: string, password: string): Promise<any> {

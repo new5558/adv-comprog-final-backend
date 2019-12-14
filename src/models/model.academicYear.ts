@@ -2,8 +2,6 @@ import mongoose, { Schema } from "mongoose";
 import { IAcademicYear } from "../interfaces/IAcademicYear";
 
 const AcademicYearSchema = new Schema({
-  _id: Schema.Types.ObjectId,
-  order: Number,
   year: String,
   semester: Number,
   startDate: Date,

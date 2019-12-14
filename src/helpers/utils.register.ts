@@ -1,7 +1,7 @@
 import { ICourse, CourseUnioned } from "../interfaces/ICourse";
 import { IAcademicYear } from "../interfaces/IAcademicYear";
-import { IUserInfoDTO } from "../interfaces/IUser";
 import { compareObjectID } from "./utils";
+import { IUser } from "../interfaces/IUser";
 
 export const checkRegistrationPeriod = (
   currentCourse: ICourse,
@@ -9,6 +9,7 @@ export const checkRegistrationPeriod = (
 ) => {
   // check year and semester
   const currentDate = new Date();
+  console.log('currentAcademicYear', currentAcademicYear, currentCourse);
   if (currentAcademicYear) {
     const {
       registrationStartDate,
@@ -28,7 +29,7 @@ export const checkRegistrationPeriod = (
 
 export const checkStudentTypeAndDegree = (
   currentCourse: ICourse,
-  userInfo: IUserInfoDTO
+  userInfo: IUser
 ) => {
   if (!(userInfo.studentType === currentCourse.studentType)) {
     return false;
@@ -56,7 +57,7 @@ export const checkCourseCapacity = (courseToRegister: CourseUnioned) => {
 
 export const checkPriorCourseRequirement = (
   currentCourse: ICourse,
-  userInfo: IUserInfoDTO
+  userInfo: IUser
 ) => {
   // check condition pass
   let conditionPass = true;
@@ -73,7 +74,7 @@ export const checkPriorCourseRequirement = (
 
 export const checkCourseAlreadyRegistered = (
   currentCourse: ICourse,
-  userInfo: IUserInfoDTO
+  userInfo: IUser
 ) => {
   // check if course already registered?
   const registeredCourse = userInfo.registeredCourses.find(registeredCourse =>

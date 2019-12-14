@@ -8,7 +8,7 @@ import {
 } from "../interfaces/IUser";
 import createError from "http-errors";
 
-@Service()
+@Service('userDataService')
 export default class UserDataService {
   @Inject("userModel")
   userModel: Model<IUser>;
@@ -19,17 +19,19 @@ export default class UserDataService {
 
   async createUser(
     userInfo: IUserInputDTO,
-    salt: string,
     passwordHashed: string
   ): Promise<IUser> {
     return await this.userModel.create({
       ...userInfo,
-      password: passwordHashed,
-      salt
+      password: passwordHashed
     });
   }
 
-  async getUserInfo(userID: Schema.Types.ObjectId): Promise<IUserInfoDTO> {
+  async createManyUsers(userInfos: IUserInputDTO[]): Promise<IUser[]> {
+    return await this.userModel.insertMany(userInfos);
+  }
+
+  async getUserInfo(userID: Schema.Types.ObjectId): Promise<IUser> {
     const fullUserInfo = await this.getUserRecord(userID);
     return fullUserInfo;
   }

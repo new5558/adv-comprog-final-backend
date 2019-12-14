@@ -11,7 +11,7 @@ export interface ICourse extends Document {
   semester: Semester;
   courseNumber: string;
   midtermDate: Date;
-  finalDate: Date;
+  finalDate: Date | null;
   name: string;
   shortName: string;
   engName: string;
