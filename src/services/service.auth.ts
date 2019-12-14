@@ -63,12 +63,9 @@ export default class AuthService {
     if (!isPasswordValid) {
       throw createError(401, "Incorrect password");
     }
+    (userRecord as any).password = undefined;
     return {
-      user: {
-        username: userRecord.username,
-        name: userRecord.name,
-        role: userRecord.role
-      },
+      user: userRecord,
       token: this.generateJWT(userRecord)
     };
   }
