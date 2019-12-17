@@ -20,7 +20,7 @@ const startSeeding = async () => {
     faculty: 21,
     major: "ICE",
     studentType: faker.random.number({ min: 0, max: 2 }),
-    degree: faker.random.number({ min: 0, max: 8 }),
+    degree: 1,
     registeredCourses: []
   }));
   console.log(users);
