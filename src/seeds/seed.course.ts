@@ -27,9 +27,9 @@ const startSeeding = async () => {
     credit: 3,
     section: Array(faker.random.number({ min: 1, max: 3 }))
       .fill(0)
-      .map(() => {
+      .map((_, index) => {
         return {
-          sectionNumber: 0,
+          sectionNumber: index + 1,
           startTime: new Date(),
           endTime: moment("2020-05-25").toDate(),
           room: faker.commerce.product(),
