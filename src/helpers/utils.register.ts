@@ -1,7 +1,8 @@
 import { ICourse, CourseUnioned } from "../interfaces/ICourse";
 import { IAcademicYear } from "../interfaces/IAcademicYear";
 // import { compareObjectID } from "./utils";
-import { IUser } from "../interfaces/IUser";
+import { IUser, RegisteredCourse } from "../interfaces/IUser";
+import { HttpError } from "http-errors";
 
 export const checkRegistrationPeriod = (
   currentCourse: ICourse,
@@ -100,3 +101,13 @@ export const checkCreditAvailibity = (coursesToRegister: ICourse[]) => {
   }
   return true;
 };
+
+export const createRegisterResult = (courseValidationResults: (HttpError | RegisteredCourse)[], coursesUnioned: CourseUnioned[]) => {
+ return courseValidationResults.map((course, i) => {
+      return {
+        ...course,
+        courseNumber: coursesUnioned[i].courseNumber,
+        name: coursesUnioned[i].engName
+      };
+  });
+}

@@ -19,7 +19,8 @@ import {
   checkStudentTypeAndDegree,
   checkCourseCapacity,
   checkPriorCourseRequirement,
-  checkCourseAlreadyRegistered
+  checkCourseAlreadyRegistered,
+  createRegisterResult
 } from "../helpers/utils.register";
 import { Dictionary } from "express-serve-static-core";
 
@@ -100,15 +101,19 @@ export default class RegistrationsService {
         uuid: courseToRegister.uuid
       } as RegisteredCourse;
     });
+
     const courseToRegistersSuccess = courseValidationResults.filter(course => {
       return !(course instanceof HttpError);
     }) as RegisteredCourse[];
+    const courseToRegistersFailed = courseValidationResults.filter(course => {
+      return course instanceof HttpError;
+    }) as HttpError[];
 
     if (courseToRegistersSuccess.length === 0) {
-      const courseToRegistersFailed = courseValidationResults.filter(course => {
-        return course instanceof HttpError;
-      }) as HttpError[];
-      throw createError(403, courseToRegistersFailed);
+      const registerResult = {
+        failed: createRegisterResult(courseToRegistersFailed, coursesUnioned)
+      };
+      throw createError(403, registerResult);
     }
 
     const courseToRegistersBySection = groupBy(
@@ -123,7 +128,10 @@ export default class RegistrationsService {
       courseToRegistersBySection,
       userInfo
     );
-    return courseValidationResults;
+    return {
+      success: createRegisterResult(courseToRegistersSuccess, coursesUnioned),
+      failed: createRegisterResult(courseToRegistersFailed, coursesUnioned)
+    };
   }
 
   async getRegistrationResult(userID: Schema.Types.ObjectId) {
