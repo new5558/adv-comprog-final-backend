@@ -15,7 +15,7 @@ const startSeeding = async () => {
     uuid: index + "",
     year: "2019",
     semester: 2,
-    courseNumber: faker.address.zipCode(),
+    courseNumber: faker.random.number({ min: 10000, max: 99999 }).toString(),
     midtermDate: moment("2020-02-14").toDate(),
     finalDate: null,
     name: faker.lorem.words(),
@@ -25,18 +25,20 @@ const startSeeding = async () => {
     faculty: 21,
     requirement: [],
     credit: 3,
-    section: [
-      {
-        sectionNumber: 0,
-        startTime: new Date(),
-        endTime: moment("2020-05-25").toDate(),
-        room: faker.commerce.product(),
-        building: faker.company.companyName(),
-        instructor: faker.name.firstName(),
-        capacity: 20,
-        enrolledStudent: []
-      }
-    ],
+    section: Array(faker.random.number({ min: 1, max: 3 }))
+      .fill(0)
+      .map(() => {
+        return {
+          sectionNumber: 0,
+          startTime: new Date(),
+          endTime: moment("2020-05-25").toDate(),
+          room: faker.commerce.product(),
+          building: faker.company.companyName(),
+          instructor: faker.name.firstName(),
+          capacity: 20,
+          enrolledStudent: []
+        };
+      }),
     requiredDegree: 0
   }));
 
