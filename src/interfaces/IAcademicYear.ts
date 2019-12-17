@@ -2,7 +2,6 @@ import { Schema, Document } from "mongoose";
 import { Semester } from "./ICommon";
 
 export interface IAcademicYear extends Document {
-  _id: Schema.Types.ObjectId;
   year: string;
   semester: Semester;
   startDate: Date;

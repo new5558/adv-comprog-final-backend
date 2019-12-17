@@ -1,6 +1,6 @@
 import { ICourse, CourseUnioned } from "../interfaces/ICourse";
 import { IAcademicYear } from "../interfaces/IAcademicYear";
-import { compareObjectID } from "./utils";
+// import { compareObjectID } from "./utils";
 import { IUser } from "../interfaces/IUser";
 
 export const checkRegistrationPeriod = (
@@ -9,7 +9,6 @@ export const checkRegistrationPeriod = (
 ) => {
   // check year and semester
   const currentDate = new Date();
-  console.log('currentAcademicYear', currentAcademicYear, currentCourse);
   if (currentAcademicYear) {
     const {
       registrationStartDate,
@@ -63,7 +62,7 @@ export const checkPriorCourseRequirement = (
   let conditionPass = true;
   currentCourse.requirement.forEach(requiredCourse => {
     const _registeredCourse = userInfo.registeredCourses.find(
-      registeredCourse => compareObjectID(registeredCourse.data, requiredCourse)
+      registeredCourse => registeredCourse.uuid === requiredCourse.uuid
     );
     if (!_registeredCourse || _registeredCourse.grade >= 5) {
       conditionPass = false;
@@ -77,8 +76,8 @@ export const checkCourseAlreadyRegistered = (
   userInfo: IUser
 ) => {
   // check if course already registered?
-  const registeredCourse = userInfo.registeredCourses.find(registeredCourse =>
-    compareObjectID(currentCourse._id, registeredCourse.data)
+  const registeredCourse = userInfo.registeredCourses.find(
+    registeredCourse => currentCourse.uuid === registeredCourse.uuid
   );
   if (
     registeredCourse &&

@@ -5,7 +5,6 @@ import { RegisteredCourse, IUser } from "./IUser";
 import { HttpError } from "http-errors";
 
 export interface ICourse extends Document {
-  _id: Schema.Types.ObjectId;
   uuid: string;
   year: string;
   semester: Semester;
@@ -17,11 +16,16 @@ export interface ICourse extends Document {
   engName: string;
   studentType: StudentType;
   faculty: number;
-  requirement: Schema.Types.ObjectId[];
+  requirement: CourseRequirement[];
   credit: number;
   section: Section[];
   requiredDegree: RequiredDegree;
 }
+
+export interface CourseRequirement {
+  data?: Schema.Types.ObjectId;
+  uuid?: string
+} 
 
 export interface ICourseInputDTO {
   uuid: ICourse["uuid"];

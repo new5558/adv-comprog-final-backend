@@ -1,5 +1,5 @@
 import { Service, Inject } from "typedi";
-import { Model } from "mongoose";
+import { Model, MongooseDocument } from "mongoose";
 import {
   ICourse,
   CourseToRegisterBySections,
@@ -12,18 +12,18 @@ export default class CourseDataService {
   @Inject("courseModel")
   courseModel: Model<ICourse>;
 
-  async insertCourses(courses: ICourseInputDTO[]): Promise<ICourse[]> {
+  async insertCourses(courses: ICourseInputDTO[]): Promise<(ICourse & MongooseDocument)[]> {
     return await this.courseModel.insertMany(courses);
   }
 
-  async findCourses(uuids: string[]): Promise<ICourse[]> {
-    return await this.courseModel.find({
+  async findCourses(uuids: string[]): Promise<(ICourse & MongooseDocument)[]> {
+    const courseModels = await this.courseModel.find({
       uuid: { $in: uuids }
     });
+    return courseModels;
   }
 
-  // @Todo add add route for this method
-  async getFullCourseInfo(uuid: string): Promise<ICourse | null> {
+  async getFullCourseInfo(uuid: string): Promise<(ICourse & MongooseDocument) | null> {
     return await this.courseModel
       .findOne({
         uuid
@@ -31,7 +31,7 @@ export default class CourseDataService {
       .populate("requirement");
   }
 
-  async getAllCourses(): Promise<ICourse[]> {
+  async getAllCourses(): Promise<(ICourse & MongooseDocument)[]> {
     return await this.courseModel.find({});
   }
 

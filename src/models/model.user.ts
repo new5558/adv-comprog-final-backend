@@ -13,6 +13,7 @@ const UserSchema = new mongoose.Schema({
   registeredCourses: [
     {
       data: { type: Schema.Types.ObjectId, ref: "course" },
+      uuid: String,
       grade: Number,
       status: Number,
       sectionNumber: Number

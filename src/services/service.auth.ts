@@ -1,10 +1,11 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { IUser, IUserInputDTO } from "../interfaces/IUser";
+import { IUser, IUserInputDTO, IUserInfoDTO } from "../interfaces/IUser";
 import { Service, Inject } from "typedi";
 import createError from "http-errors";
 import UserDataService from "../data-services/db.service.user";
 import config from "../config";
+import { modelToObj, cleanRegisterdCourses } from "../helpers/utils";
 
 @Service()
 export default class AuthService {
@@ -64,8 +65,12 @@ export default class AuthService {
       throw createError(401, "Incorrect password");
     }
     (userRecord as any).password = undefined;
+    const fullUserInfo = modelToObj<IUserInfoDTO>(userRecord) as IUserInfoDTO;
+    fullUserInfo.registeredCourses = cleanRegisterdCourses(
+      fullUserInfo.registeredCourses
+    );
     return {
-      user: userRecord,
+      user: fullUserInfo,
       token: this.generateJWT(userRecord)
     };
   }

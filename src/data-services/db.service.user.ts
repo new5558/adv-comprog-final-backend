@@ -1,5 +1,5 @@
 import { Service, Inject } from "typedi";
-import { Model, Schema, DocumentQuery } from "mongoose";
+import { Model, Schema, DocumentQuery, MongooseDocument } from "mongoose";
 import {
   IUser,
   RegisteredCourse,
@@ -8,12 +8,14 @@ import {
 } from "../interfaces/IUser";
 import createError from "http-errors";
 
-@Service('userDataService')
+@Service("userDataService")
 export default class UserDataService {
   @Inject("userModel")
   userModel: Model<IUser>;
 
-  async findUserByUsername(username: string): Promise<IUser | null> {
+  async findUserByUsername(
+    username: string
+  ): Promise<(IUser & MongooseDocument) | null> {
     return await this.userModel.findOne({ username });
   }
 
@@ -27,7 +29,9 @@ export default class UserDataService {
     });
   }
 
-  async createManyUsers(userInfos: IUserInputDTO[]): Promise<IUser[]> {
+  async createManyUsers(
+    userInfos: IUserInputDTO[]
+  ): Promise<(IUser & MongooseDocument)[]> {
     return await this.userModel.insertMany(userInfos);
   }
 
@@ -36,7 +40,9 @@ export default class UserDataService {
     return fullUserInfo;
   }
 
-  async getFullUserInfo(userID: Schema.Types.ObjectId): Promise<IUserInfoDTO> {
+  async getFullUserInfo(
+    userID: Schema.Types.ObjectId
+  ): Promise<IUserInfoDTO & MongooseDocument> {
     const fullUserInfo = await this.getUserRecord(userID).populate(
       "registeredCourses.data"
     );
@@ -58,7 +64,7 @@ export default class UserDataService {
   async insertNewCourses(
     courseToSaveInUserDB: RegisteredCourse[],
     userID: Schema.Types.ObjectId
-  ): Promise<IUserInfoDTO> {
+  ): Promise<IUserInfoDTO & MongooseDocument> {
     return await this.userModel.update(
       { _id: userID },
       {

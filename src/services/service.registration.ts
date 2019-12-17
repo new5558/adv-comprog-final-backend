@@ -1,5 +1,10 @@
 import { Service, Inject } from "typedi";
-import { ICourseRegisterDTO, CourseUnioned, WithdawalResult } from "../interfaces/ICourse";
+import {
+  ICourseRegisterDTO,
+  CourseUnioned,
+  WithdawalResult,
+  ICourse
+} from "../interfaces/ICourse";
 import { RegisteredCourse } from "../interfaces/IUser";
 import { Schema } from "mongoose";
 import createError, { HttpError } from "http-errors";
@@ -91,10 +96,10 @@ export default class RegistrationsService {
       return {
         data: courseToRegister._id,
         sectionNumber: courseToRegister.sectionNumber,
-        status: 0
+        status: 0,
+        uuid: courseToRegister.uuid
       } as RegisteredCourse;
     });
-
     const courseToRegistersSuccess = courseValidationResults.filter(course => {
       return !(course instanceof HttpError);
     }) as RegisteredCourse[];
@@ -110,7 +115,6 @@ export default class RegistrationsService {
       courseToRegistersSuccess,
       course => course.sectionNumber
     ) as Dictionary<RegisteredCourse[]>;
-
     await this.userDataService.insertNewCourses(
       courseToRegistersSuccess,
       userInfo._id
@@ -131,19 +135,21 @@ export default class RegistrationsService {
     if (currentAcademicYear) {
       const registrationResult = courses
         .filter(course => {
+          const courseData = course.data as ICourse;
           return (
-            course.data.year === currentAcademicYear.year &&
-            course.data.semester === currentAcademicYear.semester &&
+            courseData.year === currentAcademicYear.year &&
+            courseData.semester === currentAcademicYear.semester &&
             course.status <= 2
           );
         })
         .map(course => {
+          const courseData = course.data as ICourse;
           return {
-            year: course.data.year,
-            semester: course.data.semester,
-            courseNumber: course.data.courseNumber,
-            engName: course.data.engName,
-            credit: course.data.credit,
+            year: courseData.year,
+            semester: courseData.semester,
+            courseNumber: courseData.courseNumber,
+            engName: courseData.engName,
+            credit: courseData.credit,
             status: course.status
           };
         });
@@ -152,7 +158,10 @@ export default class RegistrationsService {
     throw createError(403, "Not in registration period");
   }
 
-  async withdraw(userID: Schema.Types.ObjectId, subjectsToWithdraw: string[]): Promise<WithdawalResult> {
+  async withdraw(
+    userID: Schema.Types.ObjectId,
+    subjectsToWithdraw: string[]
+  ): Promise<WithdawalResult> {
     const {
       registeredCourses,
       username,
@@ -166,23 +175,27 @@ export default class RegistrationsService {
       const currentTime = new Date();
       const subjectsForWithdrawValidated = subjectsToWithdraw
         .filter(subjectToWithdraw => {
-          const course = registeredCourses.find(
-            subject => subject.data.uuid === subjectToWithdraw
-          );
+          const course = registeredCourses.find(subject => {
+            const subjectData = subject.data as ICourse;
+            return subjectData.uuid === subjectToWithdraw;
+          });
+          const courseData = course && (course.data as ICourse);
           return (
-            course &&
-            course.data.year === currentAcademicYear.year &&
-            course.data.semester === currentAcademicYear.semester
+            courseData &&
+            courseData.year === currentAcademicYear.year &&
+            courseData.semester === currentAcademicYear.semester
           );
         })
         .map(subjectToWithdraw => {
-          const course = registeredCourses.find(
-            course => course.data.uuid === subjectToWithdraw
-          );
+          const course = registeredCourses.find(course => {
+            const courseData = course.data as ICourse;
+            return courseData.uuid === subjectToWithdraw;
+          });
           if (!course) {
             return createError(404, "Course not found");
           }
-          if (course.data.finalDate) {
+          const courseData = course.data as ICourse;
+          if (courseData.finalDate) {
             return createError(403, "The final examination has been arranged");
           }
           if (course.status === 3) {
@@ -198,9 +211,9 @@ export default class RegistrationsService {
             return createError(403, "Not in withdrawwal period");
           }
           return {
-            courseNumber: course.data.courseNumber,
-            engName: course.data.engName,
-            credit: course.data.credit
+            courseNumber: courseData.courseNumber,
+            engName: courseData.engName,
+            credit: courseData.credit
           };
         });
 

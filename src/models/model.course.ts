@@ -13,7 +13,15 @@ const CourseSchema = new mongoose.Schema({
   engName: String,
   studentType: Number,
   faculty: Number,
-  requirement: [{ type: Schema.Types.ObjectId, ref: "course" }],
+  requirement: [
+    {
+      data: {
+        type: Schema.Types.ObjectId,
+        ref: "course"
+      },
+      uuid: String
+    }
+  ],
   credit: Number,
   requiredDegree: Number,
   section: [

@@ -4,7 +4,6 @@ import { ICourse } from "./ICourse";
 
 
 export interface IUser extends Document {
-  _id: Schema.Types.ObjectId;
   name: string;
   username: string;
   password: string;
@@ -17,7 +16,8 @@ export interface IUser extends Document {
 }
 
 export interface RegisteredCourse {
-  data: ICourse & Schema.Types.ObjectId;
+  data?: ICourse | Schema.Types.ObjectId;
+  uuid?: string;
   sectionNumber: number;
   grade: Grade;
   status: CourseUserStatus;

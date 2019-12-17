@@ -1,6 +1,7 @@
 import { Service, Inject } from "typedi";
 import AcademicYearDataService from "../data-services/db.service.academicYear";
 import { IAcademicYear } from "../interfaces/IAcademicYear";
+import { cleanModels } from "../helpers/utils";
 
 @Service()
 export default class AcademicYearService {
@@ -8,6 +9,7 @@ export default class AcademicYearService {
   academicYearDataService: AcademicYearDataService;
 
   async getAllAcademicYears(): Promise<IAcademicYear[]> {
-    return await this.academicYearDataService.getAllAcademicYears();
+    const academicYearModels = await this.academicYearDataService.getAllAcademicYears();
+    return cleanModels<IAcademicYear>(academicYearModels);
   }
 }
